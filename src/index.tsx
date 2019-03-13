@@ -36,18 +36,52 @@ const findStyleInNode = (keysToFind: string[], node: Figma.Node): {} => {
 }
 
 const Output = () => {
-  // args
+  // 📝 State
+  // --------
+
+  // Config
   const [token, setToken] = useState<string>('')
   const [file, setFile] = useState<string>('')
+
+  // Data from Figma
   const [fileName, setFileName] = useState<string>('')
+  const [styles, setStyles] = useState<{ [index: string]: StyleType }>({})
+
+  // Internal State
   const [hasConfig, setHasConfig] = useState<boolean>(false)
   const [watching] = useState<boolean>(process.argv.slice(2)[0] === 'watch')
   const [client, setClient] = useState<Figma.ClientInterface>(null)
   const [loading, setLoading] = useState<boolean>(true)
 
-  const [styles, setStyles] = useState<{ [index: string]: StyleType }>({})
+  // 📡 Function to connect to Figma and get the data we need
+  // --------------------------------------------------------
 
-  // Initial Setup
+  const fetchData = async () => {
+    if (client && file) {
+      const result = await client.file(file)
+
+      setFileName(result.data.name)
+
+      const styleValues = findStyleInNode(
+        Object.keys(result.data.styles),
+        result.data.document,
+      )
+
+      const combinedStyleData = {}
+
+      Object.entries(styleValues).forEach(([key, values]) => {
+        combinedStyleData[key] = { ...result.data.styles[key], ...values }
+      })
+
+      setLoading(false)
+      setStyles(combinedStyleData)
+    }
+  }
+
+  // ⚓️ Hooks!
+  // ---------
+
+  // 🛠 Initial Setup
   useEffect(() => {
     const explorer = cosmiconfig('figmasync')
 
@@ -74,32 +108,7 @@ const Output = () => {
     }
   }, [token, file])
 
-  const fetchData = async () => {
-    if (client && file) {
-      const result = await client.file(file)
-
-      setFileName(result.data.name)
-
-      const styleValues = findStyleInNode(
-        Object.keys(result.data.styles),
-        result.data.document,
-      )
-
-      const combinedStyleData = {}
-
-      Object.entries(styleValues).forEach(([key, values]) => {
-        combinedStyleData[key] = { ...result.data.styles[key], ...values }
-      })
-
-      setLoading(false)
-      setStyles(combinedStyleData)
-    }
-  }
-
-  // if we're watching, keep rechecking the figma file
-  useInterval(fetchData, watching ? 1000 : null)
-
-  // initial data fetch
+  // 🐶 Initial data fetch
   useEffect(() => {
     const fetch = async () => {
       fetchData()
@@ -107,7 +116,11 @@ const Output = () => {
     fetch()
   }, [client])
 
+  // 👀 if we're watching, keep fetching
+  useInterval(fetchData, watching ? 1000 : null)
+
   // ⚠️ Error Handling
+  // -----------------
 
   if (!hasConfig) {
     return (
@@ -139,6 +152,9 @@ const Output = () => {
       </Frame>
     )
   }
+
+  // 🍃 The App
+  // ----------
 
   return (
     <Frame loading={loading} watching={watching} fileName={fileName}>
