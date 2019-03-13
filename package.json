@@ -10,15 +10,17 @@
   "scripts": {
     "start": "ts-node src/index.tsx",
     "type-check": "tsc",
-    "build": "tsc"
+    "build": "tsc",
+    "publish": "tsc && npm publish"
   },
   "dependencies": {
     "@types/cosmiconfig": "^5.0.3",
-    "@types/node": "^11.11.2",
+    "@types/node": "^11.11.3",
     "@types/react": "^16.8.8",
     "cosmiconfig": "^5.1.0",
     "figma-js": "^1.6.1",
     "ink": "^2.0.5",
+    "ink-box": "^1.0.0",
     "ink-spinner": "^3.0.0",
     "prettier": "^1.16.4",
     "react": "^16.8.4",
