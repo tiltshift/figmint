@@ -2,6 +2,7 @@ import * as React from 'react'
 import { useState, useEffect } from 'react'
 import * as Figma from 'figma-js'
 import useInterval from 'use-interval'
+import cosmiconfig from 'cosmiconfig'
 
 import { Color, Text, Box, render } from 'ink'
 import Spinner from 'ink-spinner'
@@ -32,9 +33,9 @@ const findStyleInNode = (keysToFind: string[], node: Figma.Node): {} => {
 
 const Output = () => {
   // args
-  const [token] = useState<string>(process.argv.slice(2)[0])
-  const [file] = useState<string>(process.argv.slice(2)[1])
-  const [watch] = useState<boolean>(process.argv.slice(2)[2] === 'watch')
+  const [token, setToken] = useState<string>('')
+  const [file, setFile] = useState<string>('')
+  const [watch] = useState<boolean>(process.argv.slice(2)[0] === 'watch')
 
   const [client, setClient] = useState<Figma.ClientInterface>(null)
   const [loading, setLoading] = useState<boolean>(true)
@@ -42,6 +43,20 @@ const Output = () => {
 
   // Initial Setup
   useEffect(() => {
+    const explorer = cosmiconfig('figmasync')
+
+    const configResult = explorer.searchSync()
+
+    if (configResult) {
+      if ('token' in configResult.config) {
+        setToken(configResult.config.token)
+      }
+
+      if ('file' in configResult.config) {
+        setFile(configResult.config.file)
+      }
+    }
+
     if (token) {
       setClient(
         Figma.Client({
@@ -49,7 +64,7 @@ const Output = () => {
         }),
       )
     }
-  }, [])
+  }, [token, file])
 
   const fetchData = async () => {
     if (client) {
@@ -74,7 +89,7 @@ const Output = () => {
   // if we're watching, keep rechecking the figma file
   useInterval(fetchData, watch ? 1000 : null)
 
-  // initial fetch
+  // initial data fetch
   useEffect(() => {
     const fetch = async () => {
       fetchData()

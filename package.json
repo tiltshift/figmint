@@ -1,11 +1,11 @@
 {
-  "name": "figma-sync",
+  "name": "figmint",
   "version": "0.0.1",
-  "description": "Sync Between Figma and Your Project",
-  "repository": "https://github.com/tiltshift/figma-js",
+  "description": "Sync Between Figma and Your Javascript Project",
+  "repository": "https://github.com/tiltshift/figmint",
   "license": "MIT",
   "bin": {
-    "figma-sync": "./bin/figma-sync.js"
+    "figmint": "./bin/figmint.js"
   },
   "scripts": {
     "start": "ts-node src/index.tsx",
@@ -13,8 +13,10 @@
     "build": "tsc"
   },
   "dependencies": {
+    "@types/cosmiconfig": "^5.0.3",
     "@types/node": "^11.11.2",
     "@types/react": "^16.8.8",
+    "cosmiconfig": "^5.1.0",
     "figma-js": "^1.6.1",
     "ink": "^2.0.5",
     "ink-spinner": "^3.0.0",

@@ -1,31 +1,51 @@
-# Figma Sync
+# 🍃 Figmint
 
-The goal of this project is that you will be able to point it at a figma file and sync all the shared styles from that file with a simple json file.
+The goal of this project is that you will be able to point it at a figma file and sync all the shared styles from that file with your JS application.
 
-This project needs a better name...
+## Install
 
-Any more docs...
-
-## Use
-
-for now you can use this by installing the dependecies:
+Add figma sync to your project:
 
 ```
-yarn
+yarn add figmint --dev
 ```
 
-and then running the project:
+You can then run via the CLI
 
 ```
-yarn start <Your Figma Token> <Your Figma File ID>
+yarn run figmint
 ```
 
-This will do a single sync and list all the color styles from the project. Note you'll need to have a figma token and the file ID for anything to work.
-
-You can also run in watch mode:
+Its also possible to run in watch mode so when you make changes in figma they are updated right away by figmint:
 
 ```
-yarn start <Your Figma Token> <Your Figma File ID> watch
+yarn run figmint watch
 ```
 
-which will keep the process running and update the style list as they are updated in the figma file.
+## Config
+
+To connect to your figma file you'll need to add both a token and the file ID.
+
+Figmint uses [cosmiconfig](https://github.com/davidtheclark/cosmiconfig) for configuration file support. This means you can configure figmint via:
+
+A .figmintrc file, written in YAML or JSON, with optional extensions: .yaml/.yml/.json.
+A .figmintrc.toml file, written in TOML (the .toml extension is required).
+A figmint.config.js or .figmintrc.js file that exports an object.
+A "figmint" key in your package.json file.
+The configuration file will be resolved starting from the location of the file being formatted, and searching up the file tree until a config file is (or isn't) found.
+
+### Options
+
+###### token
+
+Your figma token (https://www.figma.com/developers/docs#access-tokens)
+
+###### file
+
+The file ID you want to sync. In your figma file click `Share` and the copy the link. It'll look something like:
+
+```
+https://www.figma.com/file/P2X8Apme93sfEN8wACKziOxq/FileName
+```
+
+in this case the file ID is `P2X8Apme93sfEN8wACKziOxq`

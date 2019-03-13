@@ -4,6 +4,7 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "target": "esnext",
     "jsx": "react",
     "outDir": "lib"
