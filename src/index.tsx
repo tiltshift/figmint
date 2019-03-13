@@ -42,11 +42,13 @@ const Output = () => {
 
   // Initial Setup
   useEffect(() => {
-    setClient(
-      Figma.Client({
-        personalAccessToken: token,
-      }),
-    )
+    if (token) {
+      setClient(
+        Figma.Client({
+          personalAccessToken: token,
+        }),
+      )
+    }
   }, [])
 
   const fetchData = async () => {
@@ -79,6 +81,18 @@ const Output = () => {
     }
     fetch()
   }, [client])
+
+  if (!client) {
+    return (
+      <Box margin={1}>
+        <Color red>❌ Error: </Color>
+        <Text>
+          Figma Token is required.
+          (https://www.figma.com/developers/docs#access-tokens)
+        </Text>
+      </Box>
+    )
+  }
 
   if (loading) {
     return (

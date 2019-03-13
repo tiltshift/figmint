@@ -6,8 +6,8 @@
     "allowSyntheticDefaultImports": true,
     "target": "esnext",
     "jsx": "react",
-    "noEmit": true
+    "outDir": "lib"
   },
-  "compileOnSave": false,
+  "compileOnSave": true,
   "exclude": ["node_modules"]
 }
