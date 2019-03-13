@@ -4,6 +4,9 @@ import * as Figma from 'figma-js'
 import useInterval from 'use-interval'
 import cosmiconfig from 'cosmiconfig'
 
+import fs from 'fs'
+import path from 'path'
+
 import { Text, Box, render } from 'ink'
 
 import { FoundColor } from './FoundColor'
@@ -42,6 +45,7 @@ const Output = () => {
   // Config
   const [token, setToken] = useState<string>('')
   const [file, setFile] = useState<string>('')
+  const [output, setOutput] = useState<string>('figmaStyles.json')
 
   // Data from Figma
   const [fileName, setFileName] = useState<string>('')
@@ -73,6 +77,20 @@ const Output = () => {
         combinedStyleData[key] = { ...result.data.styles[key], ...values }
       })
 
+      // Make sure the output directory exists
+      const outDir = path.dirname(output)
+
+      if (!fs.existsSync(outDir)) {
+        fs.mkdirSync(outDir, { recursive: true })
+      }
+
+      fs.writeFileSync(
+        path.resolve(
+          output.indexOf('.json') === -1 ? output + '.json' : output,
+        ),
+        JSON.stringify(combinedStyleData, null, 2),
+      )
+
       setLoading(false)
       setStyles(combinedStyleData)
     }
@@ -96,6 +114,10 @@ const Output = () => {
 
       if ('file' in configResult.config) {
         setFile(configResult.config.file)
+      }
+
+      if ('output' in configResult.config) {
+        setOutput(configResult.config.output)
       }
     }
 
