@@ -11,9 +11,9 @@ import path from 'path'
 
 import { Text, Box, render } from 'ink'
 
-import { figmaToJson, RawStyleObject, StyleType } from './utils'
+import { figmaToJson, RawStyleObject } from './utils'
 
-import { Fill } from './Fill'
+import { StyleFill } from './StyleFill'
 import { Frame } from './Frame'
 import { Error } from './Error'
 
@@ -213,7 +213,7 @@ const Output = () => {
           <Text bold>Fill Styles:</Text>
         </Box>
         {fills.map((fill) => (
-          <Fill key={fill.key} fill={fill} />
+          <StyleFill key={fill.key} fill={fill} />
         ))}
       </Box>
     </Frame>

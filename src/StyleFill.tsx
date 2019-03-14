@@ -12,14 +12,13 @@ const Preview: React.FC = () => (
   </Box>
 )
 
-export const Fill: React.FC<{
+export const StyleFill: React.FC<{
   fill: FigmintStyle<FigmintFillStyleType>
 }> = ({ fill }) => (
   <Box flexDirection="column" marginLeft={2} marginRight={1}>
     <Text>{fill.name}</Text>
     <Box marginBottom={1} flexDirection="column">
       {fill.styles.map((style, index) => {
-        console.log('TYPE', style.type)
         switch (style.type) {
           case 'SOLID':
             return (

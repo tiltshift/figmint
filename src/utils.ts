@@ -1,11 +1,11 @@
 import * as Figma from 'figma-js'
 import tinycolor from 'tinycolor2'
 
-export type StyleType = Figma.Style & {
+export type RawStyleType = Figma.Style & {
   props?: [Figma.Paint | Figma.Text | Figma.Frame]
 }
 
-export type RawStyleObject = { string?: StyleType }
+export type RawStyleObject = { string?: RawStyleType }
 
 export interface FigmintPaintBase {
   type: Figma.PaintType
@@ -28,10 +28,19 @@ export interface FigmintImage extends FigmintPaintBase {
 
 export type FigmintFillStyleType = FigmintSolid | FigmintGradient | FigmintImage
 
+export type FigmintTypeStyleType = {
+  type: Figma.TextType
+  blendMode: Figma.BlendMode
+} & Figma.TypeStyle
+
 export type FigmintStyle<T> = {
   key: string
   name: string
-  styles: T[]
+  styles: T extends FigmintFillStyleType
+    ? FigmintFillStyleType[]
+    : T extends FigmintTypeStyleType
+    ? FigmintTypeStyleType[]
+    : []
 }
 
 const figmaColorToHSL = (figmaColor: Figma.Color) =>
@@ -49,11 +58,13 @@ export const figmaToJson = (figmaObject: RawStyleObject) => {
     let baseStyle = {
       key: style.key,
       name: style.name,
-      styles: [],
+      styles: undefined,
     }
 
     switch (style.styleType) {
       case 'FILL':
+        baseStyle.styles = []
+
         style.props.forEach((fill: Figma.Paint) => {
           let workingStyle: FigmintFillStyleType
 
@@ -115,6 +126,9 @@ export const figmaToJson = (figmaObject: RawStyleObject) => {
 
         break
       case 'TEXT':
+        baseStyle.styles = style.props
+
+        formattedStyles.text.push(baseStyle)
         break
       case 'EFFECT':
         break
