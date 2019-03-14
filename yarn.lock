@@ -27,7 +27,7 @@
     "@types/prop-types" "*"
     csstype "^2.2.0"
 
-"@types/tinycolor2@^1.4.1":
+"@types/tinycolor2@^1.4.0", "@types/tinycolor2@^1.4.1":
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/@types/tinycolor2/-/tinycolor2-1.4.1.tgz#2f5670c9d1d6e558897a810ed284b44918fc1253"
   integrity sha512-25L/RL5tqZkquKXVHM1fM2bd23qjfbcPpAZ2N/H05Y45g3UEi+Hw8CbDV28shKY8gH1SHiLpZSxPI1lacqdpGg==
@@ -248,9 +248,10 @@ execa@^0.7.0:
     signal-exit "^3.0.0"
     strip-eof "^1.0.0"
 
-figma-js@chrisdrackett/figma-js#patch-1:
+figma-js@^1.6.1:
   version "1.6.1"
-  resolved "https://codeload.github.com/chrisdrackett/figma-js/tar.gz/65f9f9aabc1a8da4607b825adbb53f0d50bbdcb6"
+  resolved "https://registry.yarnpkg.com/figma-js/-/figma-js-1.6.1.tgz#75ef58fd005507632b79145dc4196222e7dadd9b"
+  integrity sha512-abxIW2bSCSJc5Sn6E2fNzit5+5RkoV603V5mdJFm43OdJQ0O11cEx0HaUURswi20Um9gIPjDmWpBUCEXArqYQA==
   dependencies:
     axios "^0.18.0"
 
@@ -265,6 +266,14 @@ get-stream@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/get-stream/-/get-stream-3.0.0.tgz#8e943d1358dc37555054ecbe2edb05aa174ede14"
   integrity sha1-jpQ9E1jcN1VQVOy+LtsFqhdO3hQ=
+
+gradient-string@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/gradient-string/-/gradient-string-1.2.0.tgz#93f39f2c7c8dcb095608c2ccf0aac24aa315fbac"
+  integrity sha512-Lxog7IDMMWNjwo4O0KbdBvSewk4vW6kQe5XaLuuPCyCE65AGQ1P8YqKJa5dq8TYf/Ge31F+KjWzPR5mAJvjlAg==
+  dependencies:
+    chalk "^2.4.1"
+    tinygradient "^0.4.1"
 
 has-flag@^3.0.0:
   version "3.0.0"
@@ -285,6 +294,14 @@ ink-box@^1.0.0:
   integrity sha512-wD2ldWX9lcE/6+flKbAJ0TZF7gKbTH8CRdhEor6DD8d+V0hPITrrGeST2reDBpCia8wiqHrdxrqTyafwtmVanA==
   dependencies:
     boxen "^3.0.0"
+    prop-types "^15.7.2"
+
+ink-gradient@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/ink-gradient/-/ink-gradient-1.0.0.tgz#b3d3bc95dce44f7ef0e230ad053af9bc161da2a5"
+  integrity sha512-lK7LsvRwFv9MuWyOT9zOiaJdVtZXyMjt3UoZDUxIVTHamrPE3e8HGfnV2P3h8as7AfsGnzIeWWonhLLlrtu3ew==
+  dependencies:
+    gradient-string "^1.2.0"
     prop-types "^15.7.2"
 
 ink-spinner@^3.0.0:
@@ -614,10 +631,18 @@ term-size@^1.2.0:
   dependencies:
     execa "^0.7.0"
 
-tinycolor2@^1.4.1:
+tinycolor2@^1.0.0, tinycolor2@^1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/tinycolor2/-/tinycolor2-1.4.1.tgz#f4fad333447bc0b07d4dc8e9209d8f39a8ac77e8"
   integrity sha1-9PrTM0R7wLB9TcjpIJ2POaisd+g=
+
+tinygradient@^0.4.1:
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/tinygradient/-/tinygradient-0.4.3.tgz#0a8dfde56f8865deec4c435a51bd5b0c0dec59fa"
+  integrity sha512-tBPYQSs6eWukzzAITBSmqcOwZCKACvRa/XjPPh1mj4mnx4G3Drm51HxyCTU/TKnY8kG4hmTe5QlOh9O82aNtJQ==
+  dependencies:
+    "@types/tinycolor2" "^1.4.0"
+    tinycolor2 "^1.0.0"
 
 ts-node@^8.0.3:
   version "8.0.3"

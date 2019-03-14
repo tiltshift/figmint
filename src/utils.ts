@@ -7,6 +7,33 @@ export type StyleType = Figma.Style & {
 
 export type RawStyleObject = { string?: StyleType }
 
+export interface FigmintPaintBase {
+  type: Figma.PaintType
+  blendMode: Figma.BlendMode
+}
+
+export interface FigmintSolid extends FigmintPaintBase {
+  type: Figma.PaintTypeSolid
+  color: string
+}
+
+export interface FigmintGradient extends FigmintPaintBase {
+  type: Figma.PaintTypeGraident
+  stops: { x?: number; y: number; color: string }[]
+}
+
+export interface FigmintImage extends FigmintPaintBase {
+  type: Figma.PaintTypeImage
+}
+
+export type FigmintFillStyleType = FigmintSolid | FigmintGradient | FigmintImage
+
+export type FigmintStyle<T> = {
+  key: string
+  name: string
+  styles: T[]
+}
+
 const figmaColorToHSL = (figmaColor: Figma.Color) =>
   tinycolor.fromRatio(figmaColor).toHslString()
 
@@ -28,25 +55,60 @@ export const figmaToJson = (figmaObject: RawStyleObject) => {
     switch (style.styleType) {
       case 'FILL':
         style.props.forEach((fill: Figma.Paint) => {
+          let workingStyle: FigmintFillStyleType
+
           switch (fill.type) {
             case 'SOLID':
-              // we bake opacity into the color for SOLID
-              baseStyle.styles.push({
-                type: 'solid',
-                color: figmaColorToHSL({ ...fill.color, a: fill.opacity }),
+              workingStyle = {
+                type: fill.type,
                 blendMode: fill.blendMode,
-              })
+
+                // we bake opacity into the color for SOLID
+                color: figmaColorToHSL({
+                  ...fill.color,
+                  a: fill.opacity,
+                }),
+              }
+
               break
             case 'GRADIENT_LINEAR':
             case 'GRADIENT_RADIAL':
             case 'GRADIENT_ANGULAR':
             case 'GRADIENT_DIAMOND':
+              workingStyle = {
+                type: fill.type,
+                blendMode: fill.blendMode,
+
+                stops: fill.gradientStops.map((stop, index) => {
+                  return {
+                    color: figmaColorToHSL(stop.color),
+                    y:
+                      fill.type === 'GRADIENT_LINEAR'
+                        ? stop.position
+                        : fill.gradientHandlePositions[index].y,
+                    x:
+                      fill.type === 'GRADIENT_LINEAR'
+                        ? null
+                        : fill.gradientHandlePositions[index].x,
+                  }
+                }),
+              }
               break
             case 'IMAGE':
+              workingStyle = {
+                type: fill.type,
+                blendMode: fill.blendMode,
+              }
               // TODO https://github.com/tiltshift/figmint/issues/2
               break
             case 'EMOJI':
+              workingStyle = {
+                type: fill.type,
+                blendMode: fill.blendMode,
+              }
           }
+
+          baseStyle.styles.unshift(workingStyle)
         })
 
         formattedStyles.fill.push(baseStyle)

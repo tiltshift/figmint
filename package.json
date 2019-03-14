@@ -22,6 +22,7 @@
     "figma-js": "^1.6.1",
     "ink": "^2.0.5",
     "ink-box": "^1.0.0",
+    "ink-gradient": "^1.0.0",
     "ink-spinner": "^3.0.0",
     "prettier": "^1.16.4",
     "react": "^16.8.4",

@@ -45,6 +45,7 @@ const findStyleInNode = (
             if ('background' in node) {
               styles[key].props = node.background
             }
+            break
           default:
             // should cover fill, stroke and effect
             styles[key].props = node[styleType + 's']
