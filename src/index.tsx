@@ -1,7 +1,9 @@
 import * as React from 'react'
 import { useState, useEffect } from 'react'
-import * as Figma from 'figma-js'
 import useInterval from 'use-interval'
+
+import * as Figma from 'figma-js'
+
 import cosmiconfig from 'cosmiconfig'
 
 import fs from 'fs'
@@ -9,29 +11,52 @@ import path from 'path'
 
 import { Text, Box, render } from 'ink'
 
-import { FoundColor } from './FoundColor'
+import { figmaToJson, RawStyleObject, StyleType } from './utils'
+
+import { Fill } from './Fill'
 import { Frame } from './Frame'
 import { Error } from './Error'
 
 // clear the console
 process.stdout.write('\x1Bc')
 
-export type StyleType = Figma.Style & Figma.Paint
-
-const findStyleInNode = (keysToFind: string[], node: Figma.Node): {} => {
-  let styles = {}
-
+const findStyleInNode = (
+  keysToFind: string[],
+  node: Figma.Node,
+  styles = {},
+): RawStyleObject => {
   if ('styles' in node) {
-    // @ts-ignore https://github.com/jongold/figma-js/pull/13
     Object.entries(node.styles).forEach(([styleType, key]) => {
-      // @ts-ignore https://github.com/jongold/figma-js/pull/13
-      styles[key] = node[styleType + 's'][0]
+      if (!(key in styles)) {
+        styles[key] = {}
+
+        switch (styleType) {
+          case 'text':
+            if ('style' in node) {
+              styles[key].props = node.style
+            }
+            break
+          case 'grid':
+            if ('layoutGrids' in node) {
+              styles[key].props = node.layoutGrids
+            }
+            break
+          case 'background':
+            if ('background' in node) {
+              styles[key].props = node.background
+            }
+          default:
+            // should cover fill, stroke and effect
+            styles[key].props = node[styleType + 's']
+        }
+      }
     })
   }
+
   if ('children' in node) {
     node.children.forEach(
       (child) =>
-        (styles = { ...styles, ...findStyleInNode(keysToFind, child) }),
+        (styles = { ...styles, ...findStyleInNode(keysToFind, child, styles) }),
     )
   }
 
@@ -49,7 +74,7 @@ const Output = () => {
 
   // Data from Figma
   const [fileName, setFileName] = useState<string>('')
-  const [styles, setStyles] = useState<{ [index: string]: StyleType }>({})
+  const [fills, setFills] = useState([])
 
   // Internal State
   const [hasConfig, setHasConfig] = useState<boolean>(false)
@@ -71,11 +96,12 @@ const Output = () => {
         result.data.document,
       )
 
-      const combinedStyleData = {}
-
-      Object.entries(styleValues).forEach(([key, values]) => {
-        combinedStyleData[key] = { ...result.data.styles[key], ...values }
+      Object.entries(styleValues).map(([key, values]) => {
+        styleValues[key] = { ...result.data.styles[key], ...values }
       })
+
+      // reformat the styles
+      const formattedStyles = figmaToJson(styleValues)
 
       // Make sure the output directory exists
       const outDir = path.dirname(output)
@@ -83,16 +109,17 @@ const Output = () => {
       if (!fs.existsSync(outDir)) {
         fs.mkdirSync(outDir, { recursive: true })
       }
-
       fs.writeFileSync(
         path.resolve(
           output.indexOf('.json') === -1 ? output + '.json' : output,
         ),
-        JSON.stringify(combinedStyleData, null, 2),
+        JSON.stringify(formattedStyles, null, 2),
       )
 
       setLoading(false)
-      setStyles(combinedStyleData)
+
+      // set our local state
+      setFills(formattedStyles.fill)
     }
   }
 
@@ -182,10 +209,10 @@ const Output = () => {
     <Frame loading={loading} watching={watching} fileName={fileName}>
       <Box flexDirection="column">
         <Box marginBottom={1}>
-          <Text bold>Color Styles:</Text>
+          <Text bold>Fill Styles:</Text>
         </Box>
-        {Object.entries(styles).map(([key, style]) => (
-          <FoundColor key={key} {...style} />
+        {fills.map((fill) => (
+          <Fill key={fill.key} fill={fill} />
         ))}
       </Box>
     </Frame>

@@ -9,7 +9,7 @@
   dependencies:
     "@types/node" "*"
 
-"@types/node@*", "@types/node@^11.11.2":
+"@types/node@*", "@types/node@^11.11.3":
   version "11.11.3"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-11.11.3.tgz#7c6b0f8eaf16ae530795de2ad1b85d34bf2f5c58"
   integrity sha512-wp6IOGu1lxsfnrD+5mX6qwSwWuqsdkKKxTN4aQc4wByHAKZJf9/D4KXPQ1POUjEbnCP5LMggB0OEFNY9OTsMqg==
@@ -26,6 +26,11 @@
   dependencies:
     "@types/prop-types" "*"
     csstype "^2.2.0"
+
+"@types/tinycolor2@^1.4.1":
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/@types/tinycolor2/-/tinycolor2-1.4.1.tgz#2f5670c9d1d6e558897a810ed284b44918fc1253"
+  integrity sha512-25L/RL5tqZkquKXVHM1fM2bd23qjfbcPpAZ2N/H05Y45g3UEi+Hw8CbDV28shKY8gH1SHiLpZSxPI1lacqdpGg==
 
 ansi-align@^3.0.0:
   version "3.0.0"
@@ -243,10 +248,9 @@ execa@^0.7.0:
     signal-exit "^3.0.0"
     strip-eof "^1.0.0"
 
-figma-js@^1.6.1:
+figma-js@chrisdrackett/figma-js#patch-1:
   version "1.6.1"
-  resolved "https://registry.yarnpkg.com/figma-js/-/figma-js-1.6.1.tgz#75ef58fd005507632b79145dc4196222e7dadd9b"
-  integrity sha512-abxIW2bSCSJc5Sn6E2fNzit5+5RkoV603V5mdJFm43OdJQ0O11cEx0HaUURswi20Um9gIPjDmWpBUCEXArqYQA==
+  resolved "https://codeload.github.com/chrisdrackett/figma-js/tar.gz/65f9f9aabc1a8da4607b825adbb53f0d50bbdcb6"
   dependencies:
     axios "^0.18.0"
 
@@ -609,6 +613,11 @@ term-size@^1.2.0:
   integrity sha1-RYuDiH8oj8Vtb/+/rSYuJmOO+mk=
   dependencies:
     execa "^0.7.0"
+
+tinycolor2@^1.4.1:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/tinycolor2/-/tinycolor2-1.4.1.tgz#f4fad333447bc0b07d4dc8e9209d8f39a8ac77e8"
+  integrity sha1-9PrTM0R7wLB9TcjpIJ2POaisd+g=
 
 ts-node@^8.0.3:
   version "8.0.3"
