@@ -6,6 +6,8 @@ import tinycolor from 'tinycolor2'
 
 import { FigmintStyle, FigmintFillStyleType } from './utils'
 
+import { StyleBase } from './StyleBase'
+
 const Preview: React.FC = () => (
   <Box marginRight={1}>
     <Text>████████████████████</Text>
@@ -15,9 +17,8 @@ const Preview: React.FC = () => (
 export const StyleFill: React.FC<{
   fill: FigmintStyle<FigmintFillStyleType>
 }> = ({ fill }) => (
-  <Box flexDirection="column" marginLeft={2} marginRight={1}>
-    <Text>{fill.name}</Text>
-    <Box marginBottom={1} flexDirection="column">
+  <StyleBase name={fill.name}>
+    <Box flexDirection="column">
       {fill.styles.map((style, index) => {
         switch (style.type) {
           case 'SOLID':
@@ -52,5 +53,5 @@ export const StyleFill: React.FC<{
         }
       })}
     </Box>
-  </Box>
+  </StyleBase>
 )

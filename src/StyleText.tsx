@@ -5,22 +5,18 @@ import { Text, Box, Color } from 'ink'
 
 import { FigmintStyle, FigmintTypeStyleType } from './utils'
 
+import { StyleBase } from './StyleBase'
+
 export const StyleText: React.FC<{
   text: FigmintStyle<FigmintTypeStyleType>
 }> = ({ text }) => (
-  <Box flexDirection="column" marginBottom={1}>
+  <StyleBase name={text.name}>
     <Box flexDirection="row">
-      <Text>{text.name}</Text>
-    </Box>
-    <Box flexDirection="row">
-      <Color gray>
-        <Text>
-          <Text bold>{text.styles.fontFamily} </Text>
-        </Text>
-        <Text>
-          @ {text.styles.fontWeight}/{text.styles.fontSize}pt
-        </Text>
+      <Color blue>
+        <Text bold>{text.styles.fontFamily}</Text> {text.styles.fontSize}pt/
+        {+(text.styles.lineHeightPx / text.styles.fontSize).toFixed(2)}em,{' '}
+        {text.styles.fontWeight} weight
       </Color>
     </Box>
-  </Box>
+  </StyleBase>
 )

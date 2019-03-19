@@ -9,7 +9,7 @@ import cosmiconfig from 'cosmiconfig'
 import fs from 'fs'
 import path from 'path'
 
-import { Text, Box, render } from 'ink'
+import { Text, Box, Color, render } from 'ink'
 
 import { figmaToJson, RawStyleObject } from './utils'
 
@@ -65,6 +65,14 @@ const findStyleInNode = (
 
   return styles
 }
+
+const Header = ({ text }) => (
+  <Color gray>
+    <Box marginBottom={1}>
+      <Text bold>{text}:</Text>
+    </Box>
+  </Color>
+)
 
 const Output = () => {
   // 📝 State
@@ -214,17 +222,13 @@ const Output = () => {
     <Frame loading={loading} watching={watching} fileName={fileName}>
       <Box flexDirection="row">
         <Box flexDirection="column">
-          <Box marginBottom={1}>
-            <Text bold>Fill Styles:</Text>
-          </Box>
+          <Header text="Fill Styles" />
           {fills.map((fill) => (
             <StyleFill key={fill.key} fill={fill} />
           ))}
         </Box>
         <Box flexDirection="column">
-          <Box marginBottom={1}>
-            <Text bold>Text Styles:</Text>
-          </Box>
+          <Header text="Text Styles" />
           {typography.map((text) => (
             <StyleText key={text.key} text={text} />
           ))}
