@@ -14,6 +14,8 @@ import { Text, Box, render } from 'ink'
 import { figmaToJson, RawStyleObject } from './utils'
 
 import { StyleFill } from './StyleFill'
+import { StyleText } from './StyleText'
+
 import { Frame } from './Frame'
 import { Error } from './Error'
 
@@ -76,6 +78,7 @@ const Output = () => {
   // Data from Figma
   const [fileName, setFileName] = useState<string>('')
   const [fills, setFills] = useState([])
+  const [typography, setTypography] = useState([])
 
   // Internal State
   const [hasConfig, setHasConfig] = useState<boolean>(false)
@@ -121,6 +124,7 @@ const Output = () => {
 
       // set our local state
       setFills(formattedStyles.fill)
+      setTypography(formattedStyles.text)
     }
   }
 
@@ -208,13 +212,23 @@ const Output = () => {
 
   return (
     <Frame loading={loading} watching={watching} fileName={fileName}>
-      <Box flexDirection="column">
-        <Box marginBottom={1}>
-          <Text bold>Fill Styles:</Text>
+      <Box flexDirection="row">
+        <Box flexDirection="column">
+          <Box marginBottom={1}>
+            <Text bold>Fill Styles:</Text>
+          </Box>
+          {fills.map((fill) => (
+            <StyleFill key={fill.key} fill={fill} />
+          ))}
         </Box>
-        {fills.map((fill) => (
-          <StyleFill key={fill.key} fill={fill} />
-        ))}
+        <Box flexDirection="column">
+          <Box marginBottom={1}>
+            <Text bold>Text Styles:</Text>
+          </Box>
+          {typography.map((text) => (
+            <StyleText key={text.key} text={text} />
+          ))}
+        </Box>
       </Box>
     </Frame>
   )

@@ -28,10 +28,7 @@ export interface FigmintImage extends FigmintPaintBase {
 
 export type FigmintFillStyleType = FigmintSolid | FigmintGradient | FigmintImage
 
-export type FigmintTypeStyleType = {
-  type: Figma.TextType
-  blendMode: Figma.BlendMode
-} & Figma.TypeStyle
+export type FigmintTypeStyleType = Figma.TypeStyle
 
 export type FigmintStyle<T> = {
   key: string
@@ -39,7 +36,7 @@ export type FigmintStyle<T> = {
   styles: T extends FigmintFillStyleType
     ? FigmintFillStyleType[]
     : T extends FigmintTypeStyleType
-    ? FigmintTypeStyleType[]
+    ? FigmintTypeStyleType
     : []
 }
 
