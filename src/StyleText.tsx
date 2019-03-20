@@ -14,8 +14,7 @@ export const StyleText: React.FC<{
     <Box flexDirection="row">
       <Color blue>
         <Text bold>{text.styles.fontFamily}</Text> {text.styles.fontSize}pt/
-        {+(text.styles.lineHeightPx / text.styles.fontSize).toFixed(2)}em,{' '}
-        {text.styles.fontWeight} weight
+        {+text.styles.lineHeight.toFixed(2)}em, {text.styles.fontWeight} weight
       </Color>
     </Box>
   </StyleBase>

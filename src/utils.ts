@@ -28,7 +28,7 @@ export interface FigmintImage extends FigmintPaintBase {
 
 export type FigmintFillStyleType = FigmintSolid | FigmintGradient | FigmintImage
 
-export type FigmintTypeStyleType = Figma.TypeStyle
+export type FigmintTypeStyleType = Figma.TypeStyle & { lineHeight: number }
 
 export type FigmintStyle<T> = {
   key: string
@@ -124,6 +124,8 @@ export const figmaToJson = (figmaObject: RawStyleObject) => {
         break
       case 'TEXT':
         baseStyle.styles = style.props
+        baseStyle.styles.lineHeight =
+          baseStyle.styles.lineHeightPx / baseStyle.styles.fontSize
 
         formattedStyles.text.push(baseStyle)
         break
