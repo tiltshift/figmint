@@ -1,5 +1,4 @@
 import * as React from 'react'
-import * as Figma from 'figma-js'
 
 import { Text, Box, Color } from 'ink'
 
