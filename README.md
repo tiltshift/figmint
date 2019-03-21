@@ -51,14 +51,12 @@ https://www.figma.com/file/P2X8Apme93sfEN8wACKziOxq/FileName
 
 in this case the file ID is `P2X8Apme93sfEN8wACKziOxq`
 
-###### output (default: `figmaStyles.json`)
+###### output (default: `figmaStyles`)
 
-Figmint writes any styles it finds to a json file. By default this file is written to `./figmaStyles.json`. If you would like to use a different location you can add an `output` to your config.
+Figmint writes any styles it finds to a js file. By default this file is written to a `./figmaStyles/` directory. If you would like to use a different location you can add an `output` to your config.
 
-Output supports directories, so `some/directory/figma` as output would result in a new file `./some/directory/figma.json` being created.
+Output supports nested directories, so `some/directory/figma` as output would result in a new file `./some/directory/figma/` being created.
 
-output can be written with or without the trailing `.json`:
+###### typescript (default: `false`)
 
-```
-styles/figma.json === styles/figma
-```
+If set to true this will generate typescript types in your export.

@@ -8,6 +8,7 @@ import cosmiconfig from 'cosmiconfig'
 
 import fs from 'fs'
 import path from 'path'
+import util from 'util'
 
 import { Text, Box, Color, render } from 'ink'
 
@@ -79,20 +80,21 @@ const Output = () => {
   // --------
 
   // Config
-  const [token, setToken] = useState<string>('')
-  const [file, setFile] = useState<string>('')
-  const [output, setOutput] = useState<string>('figmaStyles.json')
+  const [token, setToken] = useState('')
+  const [file, setFile] = useState('')
+  const [output, setOutput] = useState('figmaStyles')
+  const [typescript, setTypescript] = useState(false)
 
   // Data from Figma
-  const [fileName, setFileName] = useState<string>('')
+  const [fileName, setFileName] = useState('')
   const [fills, setFills] = useState([])
   const [typography, setTypography] = useState([])
 
   // Internal State
-  const [hasConfig, setHasConfig] = useState<boolean>(false)
-  const [watching] = useState<boolean>(process.argv.slice(2)[0] === 'watch')
+  const [loading, setLoading] = useState(true)
+  const [hasConfig, setHasConfig] = useState(false)
+  const [watching] = useState(process.argv.slice(2)[0] === 'watch')
   const [client, setClient] = useState<Figma.ClientInterface>(null)
-  const [loading, setLoading] = useState<boolean>(true)
 
   // 📡 Function to connect to Figma and get the data we need
   // --------------------------------------------------------
@@ -116,16 +118,41 @@ const Output = () => {
       const formattedStyles = figmaToJson(styleValues)
 
       // Make sure the output directory exists
-      const outDir = path.dirname(output)
-
-      if (!fs.existsSync(outDir)) {
-        fs.mkdirSync(outDir, { recursive: true })
+      if (!fs.existsSync(output)) {
+        fs.mkdirSync(output, { recursive: true })
       }
+
+      // write out our file
+
+      let fillNames = ''
+      let textNames = ''
+
+      formattedStyles.fill.forEach(
+        (style) => (fillNames += `| "${style.name}"`),
+      )
+
+      formattedStyles.text.forEach(
+        (style) => (textNames += `| "${style.name}"`),
+      )
+
       fs.writeFileSync(
-        path.resolve(
-          output.indexOf('.json') === -1 ? output + '.json' : output,
-        ),
-        JSON.stringify(formattedStyles, null, 2),
+        path.join(output, `index.${typescript ? 'ts' : 'js'}`),
+        `const styles = ${util.inspect(formattedStyles, {
+          depth: Infinity,
+          compact: false,
+        })}
+
+        ${
+          typescript
+            ? `
+          export type FillNames = ${fillNames}
+          export type TextNames = ${textNames}
+          `
+            : ''
+        }
+
+
+        export default styles`,
       )
 
       setLoading(false)
@@ -143,8 +170,6 @@ const Output = () => {
   useEffect(() => {
     const explorer = cosmiconfig('figmint')
 
-    console.log('exp', explorer.searchSync())
-
     const configResult = explorer.searchSync()
 
     if (configResult) {
@@ -160,6 +185,10 @@ const Output = () => {
 
       if ('output' in configResult.config) {
         setOutput(configResult.config.output)
+      }
+
+      if ('typescript' in configResult.config) {
+        setTypescript(configResult.config.typescript)
       }
     }
 
@@ -240,4 +269,4 @@ const Output = () => {
   )
 }
 
-render(<Output />)
+render(<Output />, { debug: true })
