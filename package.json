@@ -14,21 +14,23 @@
     "publish": "tsc && npm publish"
   },
   "dependencies": {
-    "@types/cosmiconfig": "^5.0.3",
-    "@types/node": "^11.11.4",
-    "@types/react": "^16.8.8",
-    "@types/tinycolor2": "^1.4.1",
-    "cosmiconfig": "^5.1.0",
     "figma-js": "^1.6.1",
     "ink": "^2.0.6",
     "ink-box": "^1.0.0",
     "ink-gradient": "^1.0.0",
     "ink-spinner": "^3.0.0",
-    "prettier": "^1.16.4",
     "react": "^16.8.4",
     "tinycolor2": "^1.4.1",
-    "ts-node": "^8.0.3",
-    "typescript": "^3.3.4000",
     "use-interval": "^1.1.0"
+  },
+  "devDependencies": {
+    "@types/cosmiconfig": "^5.0.3",
+    "@types/node": "^11.11.4",
+    "@types/react": "^16.8.8",
+    "@types/tinycolor2": "^1.4.1",
+    "cosmiconfig": "^5.1.0",
+    "prettier": "^1.16.4",
+    "ts-node": "^8.0.3",
+    "typescript": "^3.3.4000"
   }
 }
