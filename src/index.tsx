@@ -141,7 +141,9 @@ const Output = () => {
 
   // 🛠 Initial Setup
   useEffect(() => {
-    const explorer = cosmiconfig('figmasync')
+    const explorer = cosmiconfig('figmint')
+
+    console.log('exp', explorer.searchSync())
 
     const configResult = explorer.searchSync()
 
