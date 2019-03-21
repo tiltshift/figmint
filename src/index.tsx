@@ -269,4 +269,4 @@ const Output = () => {
   )
 }
 
-render(<Output />, { debug: true })
+render(<Output />)
