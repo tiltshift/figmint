@@ -8,8 +8,10 @@
     "resolveJsonModule": true,
     "target": "esnext",
     "jsx": "react",
-    "outDir": "lib"
+    "outDir": "lib",
+    "declaration": true,
+    "declarationMap": true
   },
   "compileOnSave": true,
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "lib"]
 }
