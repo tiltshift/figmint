@@ -12,6 +12,7 @@
     "type-check": "tsc",
     "build": "tsc"
   },
+  "main": "lib/src/index.js",
   "files": [
     "bin",
     "lib",
@@ -37,6 +38,6 @@
     "cosmiconfig": "^5.1.0",
     "prettier": "^1.16.4",
     "ts-node": "^8.0.3",
-    "typescript": "^3.3.4000"
+    "typescript": "^3.4.0-rc"
   }
 }

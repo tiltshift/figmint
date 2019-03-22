@@ -124,33 +124,22 @@ const Output = () => {
 
       // write out our file
 
-      let fillNames = ''
-      let textNames = ''
-
-      formattedStyles.fill.forEach(
-        (style) => (fillNames += `| "${style.name}"`),
-      )
-
-      formattedStyles.text.forEach(
-        (style) => (textNames += `| "${style.name}"`),
-      )
-
       fs.writeFileSync(
         path.join(output, `index.${typescript ? 'ts' : 'js'}`),
-        `const styles = ${util.inspect(formattedStyles, {
+        `
+        const styles = ${util.inspect(formattedStyles, {
           depth: Infinity,
           compact: false,
-        })}
+        })} ${typescript ? 'as const' : ''}
 
         ${
           typescript
             ? `
-          export type FillNames = ${fillNames}
-          export type TextNames = ${textNames}
+          export type FillNames = typeof styles.fill[number]['name']
+          export type TextNames = typeof styles.text[number]['name']
           `
             : ''
         }
-
 
         export default styles`,
       )
