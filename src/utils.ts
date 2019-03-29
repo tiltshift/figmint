@@ -63,20 +63,22 @@ export const figmaToJson = (figmaObject: RawStyleObject) => {
         baseStyle.styles = []
 
         style.props.forEach((fill: Figma.Paint) => {
-          let workingStyle: FigmintFillStyleType
+          let workingStyle: FigmintFillStyleType = {
+            type: fill.type,
+            blendMode: fill.blendMode,
+          } as FigmintFillStyleType
 
           switch (fill.type) {
             case 'SOLID':
               workingStyle = {
-                type: fill.type,
-                blendMode: fill.blendMode,
+                ...workingStyle,
 
                 // we bake opacity into the color for SOLID
                 color: figmaColorToHSL({
                   ...fill.color,
                   a: fill.opacity,
                 }),
-              }
+              } as FigmintSolid
 
               break
             case 'GRADIENT_LINEAR':
@@ -84,9 +86,7 @@ export const figmaToJson = (figmaObject: RawStyleObject) => {
             case 'GRADIENT_ANGULAR':
             case 'GRADIENT_DIAMOND':
               workingStyle = {
-                type: fill.type,
-                blendMode: fill.blendMode,
-
+                ...workingStyle,
                 stops: fill.gradientStops.map((stop, index) => {
                   return {
                     color: figmaColorToHSL(stop.color),
@@ -100,20 +100,14 @@ export const figmaToJson = (figmaObject: RawStyleObject) => {
                         : fill.gradientHandlePositions[index].x,
                   }
                 }),
-              }
+              } as FigmintGradient
               break
             case 'IMAGE':
-              workingStyle = {
-                type: fill.type,
-                blendMode: fill.blendMode,
-              }
+              workingStyle = { ...workingStyle } as FigmintImage
               // TODO https://github.com/tiltshift/figmint/issues/2
               break
             case 'EMOJI':
-              workingStyle = {
-                type: fill.type,
-                blendMode: fill.blendMode,
-              }
+              workingStyle = { ...workingStyle } as FigmintImage
           }
 
           baseStyle.styles.unshift(workingStyle)
