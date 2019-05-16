@@ -48,8 +48,8 @@ export const figmaToJson = (
 ): {
   fill: FigmintFillStyleType[]
   text: FigmintTypeStyleType[]
-  effect: []
-  grid: []
+  effect: any[]
+  grid: any[]
 } => {
   const formattedStyles = {
     fill: [],
