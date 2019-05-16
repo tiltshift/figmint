@@ -20,6 +20,8 @@ import { StyleText } from './StyleText'
 import { Frame } from './Frame'
 import { Error } from './Error'
 
+export { FigmintTypeStyleType } from './utils'
+
 // clear the console
 process.stdout.write('\x1Bc')
 
@@ -135,6 +137,7 @@ const Output = () => {
         ${
           typescript
             ? `
+          export type SolidColors = typeof styles.fill[number]['styles'][number]['color']
           export type FillNames = typeof styles.fill[number]['name']
           export type TextNames = typeof styles.text[number]['name']
           `

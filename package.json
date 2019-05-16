@@ -1,6 +1,6 @@
 {
   "name": "figmint",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Sync Between Figma and Your Javascript Project",
   "repository": "https://github.com/tiltshift/figmint",
   "license": "MIT",
@@ -13,6 +13,7 @@
     "build": "tsc"
   },
   "main": "lib/src/index.js",
+  "types": "lib/src/index.d.ts",
   "files": [
     "bin",
     "lib",
@@ -38,6 +39,6 @@
     "cosmiconfig": "^5.1.0",
     "prettier": "^1.16.4",
     "ts-node": "^8.0.3",
-    "typescript": "^3.4.0-rc"
+    "typescript": "^3.4.1"
   }
 }

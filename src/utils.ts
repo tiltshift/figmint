@@ -43,7 +43,14 @@ export type FigmintStyle<T> = {
 const figmaColorToHSL = (figmaColor: Figma.Color) =>
   tinycolor.fromRatio(figmaColor).toHslString()
 
-export const figmaToJson = (figmaObject: RawStyleObject) => {
+export const figmaToJson = (
+  figmaObject: RawStyleObject,
+): {
+  fill: FigmintFillStyleType[]
+  text: FigmintTypeStyleType[]
+  effect: []
+  grid: []
+} => {
   const formattedStyles = {
     fill: [],
     text: [],
