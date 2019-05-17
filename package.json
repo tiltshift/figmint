@@ -1,6 +1,6 @@
 {
   "name": "figmint",
-  "version": "0.0.11",
+  "version": "0.1.0",
   "description": "Sync Between Figma and Your Javascript Project",
   "repository": "https://github.com/tiltshift/figmint",
   "license": "MIT",
@@ -15,7 +15,7 @@
   "main": "lib/src/index.js",
   "types": "lib/src/index.d.ts",
   "dependencies": {
-    "figma-js": "^1.6.1",
+    "figma-js": "^1.7.0",
     "ink": "^2.0.6",
     "ink-box": "^1.0.0",
     "ink-gradient": "^1.0.0",
