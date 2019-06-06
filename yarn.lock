@@ -253,10 +253,10 @@ execa@^0.7.0:
     signal-exit "^3.0.0"
     strip-eof "^1.0.0"
 
-figma-js@^1.6.1:
-  version "1.6.1"
-  resolved "https://registry.yarnpkg.com/figma-js/-/figma-js-1.6.1.tgz#75ef58fd005507632b79145dc4196222e7dadd9b"
-  integrity sha512-abxIW2bSCSJc5Sn6E2fNzit5+5RkoV603V5mdJFm43OdJQ0O11cEx0HaUURswi20Um9gIPjDmWpBUCEXArqYQA==
+figma-js@^1.7.0:
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/figma-js/-/figma-js-1.7.0.tgz#77f0139d708b127d1ab34cf2075be0d7a2c38a4b"
+  integrity sha512-6Tg3kxnIO6fsleqtFamrdXyTFWWdx+dInrl8OV4lwZvF3vqKcoi96YiDd1beOOIotTdDkKLvJQED10SPyY02rg==
   dependencies:
     axios "^0.18.0"
 
@@ -373,9 +373,9 @@ isexe@^2.0.0:
   integrity sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==
 
 js-yaml@^3.9.0:
-  version "3.12.2"
-  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.12.2.tgz#ef1d067c5a9d9cb65bd72f285b5d8105c77f14fc"
-  integrity sha512-QHn/Lh/7HhZ/Twc7vJYQTkjuCa0kaCcDcjK5Zlk2rvnUpy7DxMJ23+Jc2dcyvltwQVg1nygAVlB2oRDFHoRS5Q==
+  version "3.13.1"
+  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.13.1.tgz#aff151b30bfdfa8e49e05da22e7415e9dfa37847"
+  integrity sha512-YfbcO7jXDdyj0DGxYVSlSeQNHbD7XPWvrVWeVUujrQEoZzWJIRrCPoyk6kL6IAjAG2IolMK4T0hNUe0HOUs5Jw==
   dependencies:
     argparse "^1.0.7"
     esprima "^4.0.0"
