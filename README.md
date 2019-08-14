@@ -22,9 +22,22 @@ Its also possible to run in watch mode so when you make changes in figma they ar
 yarn run figmint watch
 ```
 
+## Example Project
+
+An example is included in this repo under the `example` directory. This project connects to the [example figma file](https://www.figma.com/file/tid5SFlwk8AqMGBP6dDJvw). To sync with the example figma file and run it:
+
+```
+> cd example
+> yarn
+> yarn figmint
+> yarn start
+```
+
+Then visit the example page at [http://localhost:1234](http://localhost:1234).
+
 ## Config
 
-To connect to your figma file you'll need to add both a token and the file ID.
+To connect to your own figma file you'll need to add both an access token and the file ID. See [Config Options](#config-options) for details.
 
 Figmint uses [cosmiconfig](https://github.com/davidtheclark/cosmiconfig) for configuration file support. This means you can configure figmint via:
 
