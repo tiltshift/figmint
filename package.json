@@ -10,28 +10,57 @@
   "scripts": {
     "start": "ts-node src/index.tsx",
     "type-check": "tsc",
-    "build": "tsc"
+    "lint": "eslint '**/*.{js,jsx,ts,tsx}'"
   },
   "main": "lib/src/index.js",
   "types": "lib/src/index.d.ts",
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,json,css,md,ts,tsx}": [
+      "prettier --write",
+      "git add"
+    ],
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "git add"
+    ]
+  },
   "dependencies": {
     "figma-js": "^1.7.0",
-    "ink": "^2.0.6",
+    "husky": "^3.0.3",
+    "ink": "^2.3.0",
     "ink-box": "^1.0.0",
     "ink-gradient": "^1.0.0",
-    "ink-spinner": "^3.0.0",
-    "react": "^16.8.4",
+    "ink-spinner": "^3.0.1",
+    "lint-staged": "^9.2.1",
+    "pastel": "^1.0.3",
+    "prop-types": "^15.7.2",
+    "react": "^16.9.0",
     "tinycolor2": "^1.4.1",
     "use-interval": "^1.1.0"
   },
   "devDependencies": {
     "@types/cosmiconfig": "^5.0.3",
-    "@types/node": "^11.11.4",
-    "@types/react": "^16.8.8",
-    "@types/tinycolor2": "^1.4.1",
-    "cosmiconfig": "^5.1.0",
-    "prettier": "^1.16.4",
-    "ts-node": "^8.0.3",
-    "typescript": "^3.4.1"
+    "@types/node": "^12.7.1",
+    "@types/react": "^16.9.1",
+    "@types/tinycolor2": "^1.4.2",
+    "@typescript-eslint/eslint-plugin": "1.x",
+    "@typescript-eslint/parser": "1.x",
+    "babel-eslint": "10.x",
+    "cosmiconfig": "^5.2.1",
+    "eslint": "6.x",
+    "eslint-config-react-app": "^5.0.1",
+    "eslint-plugin-flowtype": "3.x",
+    "eslint-plugin-import": "2.x",
+    "eslint-plugin-jsx-a11y": "6.x",
+    "eslint-plugin-react": "7.x",
+    "eslint-plugin-react-hooks": "1.x",
+    "prettier": "^1.18.2",
+    "ts-node": "^8.3.0",
+    "typescript": "^3.5.3"
   }
 }
