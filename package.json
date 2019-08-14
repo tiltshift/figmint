@@ -23,9 +23,6 @@
       "git add"
     ]
   },
-  "dependencies": {
-    "figma-js": "^1.7.0"
-  },
   "devDependencies": {
     "@babel/core": "^7.5.5",
     "@babel/plugin-proposal-class-properties": "^7.5.5",
@@ -51,30 +48,23 @@
     "eslint-plugin-prettier": "^3.1.0",
     "eslint-plugin-react": "7.x",
     "eslint-plugin-react-hooks": "1.x",
+    "figma-js": "^1.7.0",
     "husky": "^3.0.3",
     "ink": "^2.3.0",
     "ink-box": "^1.0.0",
     "ink-gradient": "^1.0.0",
     "ink-spinner": "^3.0.1",
     "lint-staged": "^9.2.1",
+    "parcel-bundler": "^1.12.3",
     "prettier": "^1.18.2",
     "react": "^16.9.0",
-    "rollup": "^1.19.4",
-    "rollup-plugin-babel": "^4.3.3",
-    "rollup-plugin-commonjs": "^10.0.2",
-    "rollup-plugin-json": "^4.0.0",
-    "rollup-plugin-node-builtins": "^2.1.2",
-    "rollup-plugin-node-resolve": "^5.2.0",
-    "rollup-plugin-terser": "^5.1.1",
-    "rollup-plugin-typescript": "^1.0.1",
     "tinycolor2": "^1.4.1",
     "ts-node": "^8.3.0",
     "typescript": "3.4.5",
     "use-interval": "^1.1.0"
   },
   "scripts": {
-    "build": "rollup -c",
-    "watch": "rollup -c -w",
+    "build": "parcel build src/index.tsx --out-dir bin --target node --bundle-node-modules --out-file figmint.js",
     "type-check": "tsc",
     "lint": "eslint '**/*.{js,jsx,ts,tsx}'"
   }
