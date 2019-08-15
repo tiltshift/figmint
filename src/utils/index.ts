@@ -1,10 +1,13 @@
 import * as Figma from 'figma-js'
 import tinycolor from 'tinycolor2'
 
+export type RawPropObject =
+  | Figma.TypeStyle
+  | ReadonlyArray<Figma.Paint | Figma.LayoutGrid | Figma.Effect>
+
 export type RawStyleType = Figma.Style & {
-  props:
-    | Figma.TypeStyle
-    | ReadonlyArray<Figma.Paint | Figma.LayoutGrid | Figma.Effect>
+  props: RawPropObject
+  fileName?: string
 }
 
 export type RawStyleObject = { [key: string]: RawStyleType }
@@ -26,6 +29,7 @@ export interface FigmintGradient extends FigmintPaintBase {
 
 export interface FigmintImage extends FigmintPaintBase {
   type: Figma.PaintTypeImage
+  fileName: string
 }
 
 export type ImageFill = { imageRef: string; url: string }
@@ -45,5 +49,16 @@ export type FigmintStyle<T> = {
     : []
 }
 
+export type FigmintOutput = {
+  fill: FigmintStyle<FigmintFillStyleType>[]
+  text: FigmintStyle<FigmintTypeStyleType>[]
+  effect: any[]
+  grid: any[]
+}
+
 export const figmaColorToHSL = (figmaColor: Figma.Color) =>
   tinycolor.fromRatio(figmaColor).toHslString()
+
+export * from './downloadFillImage'
+export * from './figmaToJson'
+export * from './getStylesFromFile'

@@ -17,8 +17,12 @@ import { StyleText } from './StyleText'
 import { Frame } from './Frame'
 import { Error } from './Error'
 
-import { getStylesFromFile } from './utils/getStylesFromFile'
-import { downloadFillImages } from './utils/downloadFillImages'
+import {
+  getStylesFromFile,
+  FigmintStyle,
+  FigmintFillStyleType,
+  FigmintTypeStyleType,
+} from './utils'
 
 // clear the console
 process.stdout.write('\x1Bc')
@@ -43,8 +47,12 @@ const Output = () => {
 
   // Data from Figma
   const [fileName, setFileName] = React.useState('')
-  const [fills, setFills] = React.useState([])
-  const [typography, setTypography] = React.useState([])
+  const [fills, setFills] = React.useState<
+    FigmintStyle<FigmintFillStyleType>[]
+  >([])
+  const [typography, setTypography] = React.useState<
+    FigmintStyle<FigmintTypeStyleType>[]
+  >([])
 
   // Internal State
   const [loading, setLoading] = React.useState(true)
@@ -64,18 +72,17 @@ const Output = () => {
 
       setFileName(fileResponse.data.name)
 
-      // combine the style meta data with the actual style info
-      const { styles, imageFills } = getStylesFromFile(
-        fileResponse.data,
-        imageFillsResponse.data,
-      )
-
       // Make sure the output directory exists
       if (!fs.existsSync(output)) {
         fs.mkdirSync(output, { recursive: true })
       }
 
-      downloadFillImages(imageFills, output)
+      // combine the style meta data with the actual style info
+      const styles = await getStylesFromFile(
+        fileResponse.data,
+        imageFillsResponse.data,
+        output,
+      )
 
       // write out our file
 
@@ -214,4 +221,4 @@ const Output = () => {
   )
 }
 
-render(<Output />, { debug: true })
+render(<Output />)

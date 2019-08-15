@@ -1,40 +1,46 @@
 import * as Figma from 'figma-js'
 
-import { RawStyleObject, RawStyleType, ImageFillArray } from './'
+import { RawStyleObject, RawStyleType } from './'
 import { figmaToJson } from './figmaToJson'
+import { downloadFillImage } from './downloadFillImage'
 
-export const getStylesFromFile = (
+export const getStylesFromFile = async (
   file: Figma.FileResponse,
   imageFills: Figma.FileImageFillsResponse,
+  output: string,
 ) => {
   const styleDefinitions = Object.keys(file.styles)
 
   const styleValues = findStyleInNode(styleDefinitions, file.document)
 
-  const images: ImageFillArray = []
+  let fileName: string | undefined
 
-  Object.entries(styleValues).forEach(([key, style]) => {
-    // combine the style meta-data with the actuall style values (props)
-    const combinedStyle = { ...file.styles[key], ...style }
-
+  for (const [key, style] of Object.entries(styleValues)) {
     // if we're an image fill grab the image url
-    if (combinedStyle.styleType === 'FILL') {
+    if (file.styles[key].styleType === 'FILL') {
       const fills = style.props as Figma.Paint[]
 
-      fills.forEach((fill) => {
+      for (const fill of fills) {
         if (fill.type === 'IMAGE' && fill.imageRef) {
-          images.push({
-            imageRef: fill.imageRef,
-            url: imageFills.meta.images[fill.imageRef],
-          })
+          fileName = await downloadFillImage(
+            {
+              imageRef: fill.imageRef,
+              url: imageFills.meta.images[fill.imageRef],
+            },
+            output,
+          )
         }
-      })
+      }
     }
 
-    styleValues[key] = { ...file.styles[key], ...style }
-  })
+    styleValues[key] = {
+      ...file.styles[key],
+      ...style,
+      ...(fileName ? { fileName } : {}),
+    }
+  }
 
-  return { styles: figmaToJson(styleValues), imageFills: images }
+  return figmaToJson(styleValues)
 }
 
 // work through the node and its children to attach all style definitions to the style types

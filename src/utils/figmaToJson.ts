@@ -4,38 +4,36 @@ import {
   figmaColorToHSL,
   RawStyleObject,
   FigmintFillStyleType,
-  FigmintTypeStyleType,
   FigmintImage,
+  FigmintOutput,
+  FigmintSolid,
+  FigmintGradient,
 } from './'
 
-export const figmaToJson = (
-  figmaObject: RawStyleObject,
-): {
-  fill: FigmintFillStyleType[]
-  text: FigmintTypeStyleType[]
-  effect: any[]
-  grid: any[]
-} => {
+export const figmaToJson = (figmaObject: RawStyleObject): FigmintOutput => {
   const formattedStyles = {
     fill: [],
     text: [],
     effect: [],
     grid: [],
-  }
+  } as FigmintOutput
 
   Object.values(figmaObject).forEach((style) => {
     const baseStyle = {
       key: style.key,
       name: style.name,
-      styles: undefined,
     }
 
-    switch (style.styleType) {
-      case 'FILL':
-        baseStyle.styles = []
+    let styleProps
 
-        style.props.forEach((fill: Figma.Paint) => {
-          let workingStyle: FigmintFillStyleType = {
+    switch (style.styleType) {
+      case 'FILL': {
+        const fillStyles = [] as FigmintFillStyleType[]
+
+        styleProps = style.props as Figma.Paint[]
+
+        styleProps.forEach((fill) => {
+          let workingStyle = {
             type: fill.type,
             blendMode: fill.blendMode,
           } as FigmintFillStyleType
@@ -47,7 +45,7 @@ export const figmaToJson = (
 
                 // we bake opacity into the color for SOLID
                 color: figmaColorToHSL({
-                  ...fill.color,
+                  ...(fill.color as Figma.Color),
                   a: fill.opacity,
                 }),
               } as FigmintSolid
@@ -56,41 +54,64 @@ export const figmaToJson = (
             case 'GRADIENT_LINEAR':
             case 'GRADIENT_RADIAL':
             case 'GRADIENT_ANGULAR':
-            case 'GRADIENT_DIAMOND':
+            case 'GRADIENT_DIAMOND': {
+              const stops = fill.gradientStops as NonNullable<
+                typeof fill.gradientStops
+              >
+              const handlePositions = fill.gradientHandlePositions as NonNullable<
+                typeof fill.gradientHandlePositions
+              >
               workingStyle = {
                 ...workingStyle,
-                stops: fill.gradientStops.map((stop, index) => {
+                stops: stops.map((stop, index) => {
                   return {
                     color: figmaColorToHSL(stop.color),
                     y:
                       fill.type === 'GRADIENT_LINEAR'
                         ? stop.position
-                        : fill.gradientHandlePositions[index].y,
+                        : handlePositions[index].y,
                     x:
                       fill.type === 'GRADIENT_LINEAR'
                         ? null
-                        : fill.gradientHandlePositions[index].x,
+                        : handlePositions[index].x,
                   }
                 }),
               } as FigmintGradient
               break
-            case 'IMAGE':
-            case 'EMOJI':
+            }
+            case 'IMAGE': {
+              workingStyle = {
+                ...workingStyle,
+                fileName: style.fileName,
+              } as FigmintImage
+              break
+            }
+            case 'EMOJI': {
+              // not sure what this is :)
               workingStyle = { ...workingStyle } as FigmintImage
+            }
           }
 
-          baseStyle.styles.unshift(workingStyle)
+          fillStyles.unshift(workingStyle)
         })
 
-        formattedStyles.fill.push(baseStyle)
+        formattedStyles.fill.push({
+          ...baseStyle,
+          styles: fillStyles,
+        })
 
         break
+      }
       case 'TEXT':
-        baseStyle.styles = style.props
-        baseStyle.styles.lineHeight =
-          baseStyle.styles.lineHeightPx / baseStyle.styles.fontSize
+        styleProps = style.props as Figma.TypeStyle
 
-        formattedStyles.text.push(baseStyle)
+        formattedStyles.text.push({
+          ...baseStyle,
+          styles: {
+            ...styleProps,
+            lineHeight: styleProps.lineHeightPx / styleProps.fontSize,
+          },
+        })
         break
       case 'EFFECT':
         break
