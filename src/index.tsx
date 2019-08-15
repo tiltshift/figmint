@@ -86,6 +86,16 @@ const Output = () => {
 
       // write out our file
 
+      let solidColors = ''
+
+      styles.fill.forEach((fill) => {
+        fill.styles.forEach((style) => {
+          if (style.type === 'SOLID') {
+            solidColors += `| '${style.color}'`
+          }
+        })
+      })
+
       fs.writeFileSync(
         path.join(output, `index.${typescript ? 'ts' : 'js'}`),
         `
@@ -97,7 +107,7 @@ const Output = () => {
         ${
           typescript
             ? `
-          export type SolidColors = typeof styles.fill[number]['styles'][number]['color']
+          export type SolidColors = ${solidColors}
           export type FillNames = typeof styles.fill[number]['name']
           export type TextNames = typeof styles.text[number]['name']
           `
