@@ -50,6 +50,7 @@
     "eslint-plugin-react-hooks": "1.x",
     "figma-js": "^1.7.0",
     "husky": "^3.0.3",
+    "image-type": "^4.1.0",
     "ink": "^2.3.0",
     "ink-box": "^1.0.0",
     "ink-gradient": "^1.0.0",
