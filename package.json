@@ -65,6 +65,7 @@
   },
   "scripts": {
     "build": "parcel build src/index.tsx --out-dir bin --target node --bundle-node-modules --out-file figmint.js",
+    "watch": "parcel watch src/index.tsx --out-dir bin --target node --bundle-node-modules --out-file figmint.js",
     "type-check": "tsc",
     "lint": "eslint '**/*.{js,jsx,ts,tsx}'"
   }
