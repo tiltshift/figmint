@@ -6,7 +6,8 @@
   "scripts": {
     "start": "parcel index.html",
     "build": "parcel build index.html",
-    "figmint": "node ../bin/figmint.js"
+    "figmint": "node ../bin/figmint.js",
+    "watch": "node ../bin/figmint.js watch"
   },
   "dependencies": {
     "react-dom": "^16.9.0"
