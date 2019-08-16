@@ -35,7 +35,10 @@ export type ImageFill = { imageRef: string; url: string }
 export type ImageFillArray = ImageFill[]
 
 export type BaseFillStyleType = FigmintSolid | FigmintGradient | FigmintImage
-export type BaseTypeStyleType = Figma.TypeStyle & { lineHeight: number }
+export type BaseTypeStyleType = Figma.TypeStyle & {
+  lineHeight: number
+  fontStyle: string
+}
 
 export type FigmintStyle<T> = {
   key: string
@@ -51,8 +54,8 @@ export type FigmintFillStyleType = FigmintStyle<BaseFillStyleType>
 export type FigmintTypeStyleType = FigmintStyle<BaseTypeStyleType>
 
 export type FigmintOutput = {
-  fills: FigmintFillStyleType[]
-  text: FigmintTypeStyleType[]
-  effects: any[]
-  grids: any[]
+  fillStyles: FigmintFillStyleType[]
+  textStyles: FigmintTypeStyleType[]
+  effectStyles: any[]
+  gridStyles: any[]
 }

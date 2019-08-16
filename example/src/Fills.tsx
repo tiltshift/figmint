@@ -4,12 +4,12 @@ import { FigmintFillStyleType } from 'figmint'
 // @ts-ignore
 import pngs from '../figma/fillImages/*.png'
 
-const Fill: React.FC<{ fill: FigmintFillStyleType }> = ({ fill }) => {
+const Fill: React.FC<{ fillStyle: FigmintFillStyleType }> = ({ fillStyle }) => {
   return (
-    <div>
-      <h3>{fill.name}</h3>
+    <div style={{ margin: 20 }}>
+      <h3>{fillStyle.name}</h3>
       <ul>
-        {fill.styles.map((style, index) => {
+        {fillStyle.styles.map((style, index) => {
           let fillExample = <div>This fill type not yet supported!</div>
 
           switch (style.type) {
@@ -18,8 +18,8 @@ const Fill: React.FC<{ fill: FigmintFillStyleType }> = ({ fill }) => {
                 <span
                   style={{
                     display: 'inline-block',
-                    width: 200,
-                    height: 20,
+                    width: 70,
+                    height: 70,
                     backgroundColor: style.color,
                   }}
                 />
@@ -41,8 +41,8 @@ const Fill: React.FC<{ fill: FigmintFillStyleType }> = ({ fill }) => {
                 <span
                   style={{
                     display: 'inline-block',
-                    width: 200,
-                    height: 200,
+                    width: 70,
+                    height: 70,
                     background: gradientString,
                   }}
                 />
@@ -67,8 +67,8 @@ const Fill: React.FC<{ fill: FigmintFillStyleType }> = ({ fill }) => {
               fillExample = imageSrc ? (
                 <img
                   alt="figma background"
-                  width={200}
-                  height={200}
+                  width={70}
+                  height={70}
                   src={imageSrc}
                 />
               ) : (
@@ -84,14 +84,14 @@ const Fill: React.FC<{ fill: FigmintFillStyleType }> = ({ fill }) => {
   )
 }
 
-export const Fills: React.FC<{ fills: FigmintFillStyleType[] }> = ({
-  fills,
+export const Fills: React.FC<{ fillStyles: FigmintFillStyleType[] }> = ({
+  fillStyles,
 }) => {
   return (
     <div>
       <h2>Fills:</h2>
-      {fills.map((fill, index) => (
-        <Fill fill={fill} key={index} />
+      {fillStyles.map((fillStyle, index) => (
+        <Fill fillStyle={fillStyle} key={index} />
       ))}
     </div>
   )

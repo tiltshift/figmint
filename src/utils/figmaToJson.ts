@@ -12,10 +12,10 @@ import {
 
 export const figmaToJson = (figmaObject: RawStyleObject): FigmintOutput => {
   const formattedStyles = {
-    fills: [],
-    text: [],
-    effects: [],
-    grids: [],
+    fillStyles: [],
+    textStyles: [],
+    effectStyles: [],
+    gridStyles: [],
   } as FigmintOutput
 
   Object.values(figmaObject).forEach((style) => {
@@ -95,7 +95,7 @@ export const figmaToJson = (figmaObject: RawStyleObject): FigmintOutput => {
           fillStyles.unshift(workingStyle)
         })
 
-        formattedStyles.fills.push({
+        formattedStyles.fillStyles.push({
           ...baseStyle,
           styles: fillStyles,
         })
@@ -105,11 +105,12 @@ export const figmaToJson = (figmaObject: RawStyleObject): FigmintOutput => {
       case 'TEXT':
         styleProps = style.props as Figma.TypeStyle
 
-        formattedStyles.text.push({
+        formattedStyles.textStyles.push({
           ...baseStyle,
           styles: {
             ...styleProps,
             lineHeight: styleProps.lineHeightPx / styleProps.fontSize,
+            fontStyle: styleProps.italic ? 'italic' : 'inherit',
           },
         })
         break

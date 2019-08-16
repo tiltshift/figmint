@@ -3,6 +3,7 @@ import React from 'react'
 import styles from '../figma'
 
 import { Fills } from './Fills'
+import { Text } from './Text'
 
 export const App: React.FC = () => {
   return (
@@ -15,7 +16,10 @@ export const App: React.FC = () => {
         height="450"
         src="https://www.figma.com/embed?embed_host=figmint&url=https%3A%2F%2Fwww.figma.com%2Ffile%2Ftid5SFlwk8AqMGBP6dDJvw%2FFigmint-Example%3Fnode-id%3D0%253A1"
       />
-      <Fills fills={styles.fills} />
+      <div style={{ display: 'flex' }}>
+        <Fills fillStyles={styles.fillStyles} />
+        <Text textStyles={styles.textStyles} />
+      </div>
     </div>
   )
 }

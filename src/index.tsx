@@ -19,9 +19,8 @@ import { Error } from './Error'
 
 import {
   getStylesFromFile,
-  FigmintStyle,
-  BaseFillStyleType,
-  BaseTypeStyleType,
+  FigmintFillStyleType,
+  FigmintTypeStyleType,
 } from './utils'
 
 // export our types for clients to use
@@ -50,12 +49,8 @@ const Output = () => {
 
   // Data from Figma
   const [fileName, setFileName] = React.useState('')
-  const [fills, setFills] = React.useState<FigmintStyle<BaseFillStyleType>[]>(
-    [],
-  )
-  const [typography, setTypography] = React.useState<
-    FigmintStyle<BaseTypeStyleType>[]
-  >([])
+  const [fills, setFills] = React.useState<FigmintFillStyleType[]>([])
+  const [typography, setTypography] = React.useState<FigmintTypeStyleType[]>([])
 
   // Internal State
   const [loading, setLoading] = React.useState(true)
@@ -93,7 +88,7 @@ const Output = () => {
       let fillNames = ''
       let textNames = ''
 
-      styles.fills.forEach((fill) => {
+      styles.fillStyles.forEach((fill) => {
         fillNames += `| '${fill.name}'`
         fill.styles.forEach((style) => {
           if (style.type === 'SOLID') {
@@ -102,8 +97,8 @@ const Output = () => {
         })
       })
 
-      styles.text.forEach((text) => {
-        textNames += `| ${text.name}`
+      styles.textStyles.forEach((text) => {
+        textNames += `| '${text.name}'`
       })
 
       fs.writeFileSync(
@@ -137,8 +132,8 @@ const Output = () => {
       setLoading(false)
 
       // set our local state
-      setFills(styles.fills)
-      setTypography(styles.text)
+      setFills(styles.fillStyles)
+      setTypography(styles.textStyles)
     }
   }, [client, file, output, typescript])
 
