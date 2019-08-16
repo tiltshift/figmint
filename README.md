@@ -27,7 +27,7 @@ yarn add figmint --dev
 
 Add a `.figmintrc.json` file to your project.
 
-The required options are a [`token`](<(https://www.figma.com/developers/docs#access-tokens)>) and a [`file id`](#file).
+The required options are a [`token`](https://www.figma.com/developers/docs#access-tokens) and a [`file id`](#file).
 
 `.figmintrc.json`
 
