@@ -1,10 +1,12 @@
 # 🍃 Figmint
 
-The goal of this project is that you will be able to point it at a figma file and sync all the shared styles from that file with your JS application.
+Figmint can sync styles from a file in figma to json that can be used in a javascript project.
+
+![example video](https://cl.ly/7edbcba03eb2/Screen%20Recording%202019-08-15%20at%2008.43%20PM.gif)
 
 ## Install
 
-Add figma sync to your project:
+Add figmint to your project:
 
 ```
 yarn add figmint --dev

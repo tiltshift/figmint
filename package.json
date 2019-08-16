@@ -55,6 +55,7 @@
     "eslint-plugin-prettier": "^3.1.0",
     "eslint-plugin-react": "7.x",
     "eslint-plugin-react-hooks": "1.x",
+    "gh-pages": "^2.1.1",
     "husky": "^3.0.3",
     "image-type": "^4.1.0",
     "ink": "^2.3.0",
@@ -75,6 +76,7 @@
     "watch": "parcel watch src/index.tsx --out-dir bin --target node --bundle-node-modules --out-file figmint.js",
     "type-check": "tsc --noEmit",
     "build-types": "tsc src/utils/types.ts --outDir bin --declaration --emitDeclarationOnly",
-    "lint": "eslint '**/*.{js,jsx,ts,tsx}'"
+    "lint": "eslint '**/*.{js,jsx,ts,tsx}'",
+    "gh-pages": "gh-pages -d example/dist -m \"Update Github pages\""
   }
 }
