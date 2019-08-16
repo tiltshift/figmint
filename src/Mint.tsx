@@ -1,6 +1,8 @@
 import * as React from 'react'
 
 import { Color } from 'ink'
+
+// @ts-ignore
 import Spinner from 'ink-spinner'
 
 const mintGreen = '#98c379'

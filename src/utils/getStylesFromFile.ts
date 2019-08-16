@@ -51,7 +51,7 @@ const findStyleInNode = (
 ): RawStyleObject => {
   let finalStyles = styles
 
-  if ('styles' in node) {
+  if ('styles' in node && node.styles !== undefined) {
     Object.entries(node.styles).forEach(([styleType, key]) => {
       if (!(key in styles)) {
         finalStyles[key] = {} as RawStyleType
@@ -63,7 +63,7 @@ const findStyleInNode = (
             }
             break
           case 'grid':
-            if ('layoutGrids' in node) {
+            if ('layoutGrids' in node && node.layoutGrids !== undefined) {
               styles[key].props = node.layoutGrids
             }
             break

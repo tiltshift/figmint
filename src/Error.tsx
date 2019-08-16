@@ -1,6 +1,8 @@
 import * as React from 'react'
 
 import { Color } from 'ink'
+
+// @ts-ignore
 import BorderBox from 'ink-box'
 
 export const Error: React.FC = ({ children }) => (

@@ -46,7 +46,7 @@ export const figmaToJson = (figmaObject: RawStyleObject): FigmintOutput => {
                 // we bake opacity into the color for SOLID
                 color: figmaColorToHSL({
                   ...(fill.color as Figma.Color),
-                  a: fill.opacity,
+                  a: fill.opacity ? fill.opacity : 1,
                 }),
               } as FigmintSolid
 

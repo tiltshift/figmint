@@ -72,11 +72,12 @@
     "use-interval": "^1.1.0"
   },
   "scripts": {
-    "build": "parcel build src/index.tsx --out-dir bin --target node --bundle-node-modules --out-file figmint.js && yarn build-types",
+    "build": "parcel build src/index.tsx --out-dir bin --target node --bundle-node-modules --no-source-maps --out-file figmint.js && yarn build-types",
     "watch": "parcel watch src/index.tsx --out-dir bin --target node --bundle-node-modules --out-file figmint.js",
     "type-check": "tsc --noEmit",
     "build-types": "tsc src/utils/types.ts --outDir bin --declaration --emitDeclarationOnly",
     "lint": "eslint '**/*.{js,jsx,ts,tsx}'",
-    "gh-pages": "gh-pages -d example/dist -m \"Update Github pages\""
+    "gh-pages": "gh-pages -d example/dist -m \"Update Github pages\"",
+    "release": "yarn build && yarn publish"
   }
 }
