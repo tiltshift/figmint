@@ -1,4 +1,13 @@
 .DS_Store
 node_modules
 lib
-/yarn-error.log
+yarn-error.log
+dist
+
+bin/figmint.js
+bin/figmint.js.map
+bin/types.d.ts
+
+.cache
+example/figma
+/example/yarn.lock

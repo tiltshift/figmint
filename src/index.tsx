@@ -1,5 +1,4 @@
-import * as React from 'react'
-import { useState, useEffect } from 'react'
+import React from 'react'
 import useInterval from 'use-interval'
 
 import * as Figma from 'figma-js'
@@ -12,64 +11,25 @@ import util from 'util'
 
 import { Text, Box, Color, render } from 'ink'
 
-import { figmaToJson, RawStyleObject } from './utils'
-
 import { StyleFill } from './StyleFill'
 import { StyleText } from './StyleText'
 
 import { Frame } from './Frame'
 import { Error } from './Error'
 
-export { FigmintTypeStyleType } from './utils'
+import {
+  getStylesFromFile,
+  FigmintFillStyleType,
+  FigmintTypeStyleType,
+} from './utils'
+
+// export our types for clients to use
+export * from './utils/types'
 
 // clear the console
 process.stdout.write('\x1Bc')
 
-const findStyleInNode = (
-  keysToFind: string[],
-  node: Figma.Node,
-  styles = {},
-): RawStyleObject => {
-  if ('styles' in node) {
-    Object.entries(node.styles).forEach(([styleType, key]) => {
-      if (!(key in styles)) {
-        styles[key] = {}
-
-        switch (styleType) {
-          case 'text':
-            if ('style' in node) {
-              styles[key].props = node.style
-            }
-            break
-          case 'grid':
-            if ('layoutGrids' in node) {
-              styles[key].props = node.layoutGrids
-            }
-            break
-          case 'background':
-            if ('background' in node) {
-              styles[key].props = node.background
-            }
-            break
-          default:
-            // should cover fill, stroke and effect
-            styles[key].props = node[styleType + 's']
-        }
-      }
-    })
-  }
-
-  if ('children' in node) {
-    node.children.forEach(
-      (child) =>
-        (styles = { ...styles, ...findStyleInNode(keysToFind, child, styles) }),
-    )
-  }
-
-  return styles
-}
-
-const Header = ({ text }) => (
+const Header = ({ text }: { text: string }) => (
   <Color gray>
     <Box marginBottom={1}>
       <Text bold>{text}:</Text>
@@ -82,64 +42,86 @@ const Output = () => {
   // --------
 
   // Config
-  const [token, setToken] = useState('')
-  const [file, setFile] = useState('')
-  const [output, setOutput] = useState('figmaStyles')
-  const [typescript, setTypescript] = useState(false)
+  const [token, setToken] = React.useState('')
+  const [file, setFile] = React.useState('')
+  const [output, setOutput] = React.useState('figmaStyles')
+  const [typescript, setTypescript] = React.useState(false)
 
   // Data from Figma
-  const [fileName, setFileName] = useState('')
-  const [fills, setFills] = useState([])
-  const [typography, setTypography] = useState([])
+  const [fileName, setFileName] = React.useState('')
+  const [fills, setFills] = React.useState<FigmintFillStyleType[]>([])
+  const [typography, setTypography] = React.useState<FigmintTypeStyleType[]>([])
 
   // Internal State
-  const [loading, setLoading] = useState(true)
-  const [hasConfig, setHasConfig] = useState(false)
-  const [watching] = useState(process.argv.slice(2)[0] === 'watch')
-  const [client, setClient] = useState<Figma.ClientInterface>(null)
+  const [loading, setLoading] = React.useState(true)
+  const [hasConfig, setHasConfig] = React.useState(false)
+  const [watching] = React.useState(process.argv.slice(2)[0] === 'watch')
+  const [client, setClient] = React.useState<Figma.ClientInterface>()
 
   // 📡 Function to connect to Figma and get the data we need
   // --------------------------------------------------------
 
-  const fetchData = async () => {
+  const fetchData = React.useCallback(async () => {
     if (client && file) {
-      const result = await client.file(file)
+      const [fileResponse, imageFillsResponse] = await Promise.all([
+        client.file(file),
+        client.fileImageFills(file),
+      ])
 
-      setFileName(result.data.name)
-
-      const styleValues = findStyleInNode(
-        Object.keys(result.data.styles),
-        result.data.document,
-      )
-
-      Object.entries(styleValues).map(([key, values]) => {
-        styleValues[key] = { ...result.data.styles[key], ...values }
-      })
-
-      // reformat the styles
-      const formattedStyles = figmaToJson(styleValues)
+      setFileName(fileResponse.data.name)
 
       // Make sure the output directory exists
       if (!fs.existsSync(output)) {
         fs.mkdirSync(output, { recursive: true })
       }
 
+      // combine the style meta data with the actual style info
+      const styles = await getStylesFromFile(
+        fileResponse.data,
+        imageFillsResponse.data,
+        output,
+      )
+
       // write out our file
+
+      let solidColors = ''
+      let fillNames = ''
+      let textNames = ''
+
+      styles.fillStyles.forEach((fill) => {
+        fillNames += `| '${fill.name}'`
+        fill.styles.forEach((style) => {
+          if (style.type === 'SOLID') {
+            solidColors += `| '${style.color}'`
+          }
+        })
+      })
+
+      styles.textStyles.forEach((text) => {
+        textNames += `| '${text.name}'`
+      })
 
       fs.writeFileSync(
         path.join(output, `index.${typescript ? 'ts' : 'js'}`),
         `
-        const styles = ${util.inspect(formattedStyles, {
-          depth: Infinity,
-          compact: false,
-        })} ${typescript ? 'as const' : ''}
+        ${typescript ? `import { FigmintOutput } from 'figmint'` : ''}
+
+        const styles${typescript ? ': FigmintOutput' : ''} = ${util.inspect(
+          styles,
+          {
+            depth: Infinity,
+            compact: false,
+          },
+        )}
 
         ${
           typescript
             ? `
-          export type SolidColors = typeof styles.fill[number]['styles'][number]['color']
-          export type FillNames = typeof styles.fill[number]['name']
-          export type TextNames = typeof styles.text[number]['name']
+          ${
+            solidColors !== '' ? `export type SolidColors = ${solidColors}` : ''
+          }
+          ${fillNames !== '' ? `export type FillNames = ${fillNames}` : ''}
+          ${textNames !== '' ? `export type TextNames = ${textNames}` : ''}
           `
             : ''
         }
@@ -150,16 +132,16 @@ const Output = () => {
       setLoading(false)
 
       // set our local state
-      setFills(formattedStyles.fill)
-      setTypography(formattedStyles.text)
+      setFills(styles.fillStyles)
+      setTypography(styles.textStyles)
     }
-  }
+  }, [client, file, output, typescript])
 
   // ⚓️ Hooks!
   // ---------
 
   // 🛠 Initial Setup
-  useEffect(() => {
+  React.useEffect(() => {
     const explorer = cosmiconfig('figmint')
 
     const configResult = explorer.searchSync()
@@ -194,12 +176,12 @@ const Output = () => {
   }, [token, file])
 
   // 🐶 Initial data fetch
-  useEffect(() => {
+  React.useEffect(() => {
     const fetch = async () => {
       fetchData()
     }
     fetch()
-  }, [client])
+  }, [client, fetchData])
 
   // 👀 if we're watching, keep fetching
   useInterval(fetchData, watching ? 1000 : null)

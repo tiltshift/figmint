@@ -1,37 +1,82 @@
 {
   "name": "figmint",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Sync Between Figma and Your Javascript Project",
   "repository": "https://github.com/tiltshift/figmint",
   "license": "MIT",
   "bin": {
     "figmint": "./bin/figmint.js"
   },
-  "scripts": {
-    "start": "ts-node src/index.tsx",
-    "type-check": "tsc",
-    "build": "tsc"
+  "main": "bin/figmint.js",
+  "files": [
+    "bin"
+  ],
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   },
-  "main": "lib/src/index.js",
-  "types": "lib/src/index.d.ts",
+  "lint-staged": {
+    "*.{js,json,css,md,ts,tsx}": [
+      "prettier --write",
+      "git add"
+    ],
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "git add"
+    ]
+  },
   "dependencies": {
-    "figma-js": "^1.7.0",
-    "ink": "^2.0.6",
-    "ink-box": "^1.0.0",
-    "ink-gradient": "^1.0.0",
-    "ink-spinner": "^3.0.0",
-    "react": "^16.8.4",
-    "tinycolor2": "^1.4.1",
-    "use-interval": "^1.1.0"
+    "figma-js": "^1.8.1",
+    "utils": "^0.3.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-proposal-object-rest-spread": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/preset-typescript": "^7.3.3",
     "@types/cosmiconfig": "^5.0.3",
-    "@types/node": "^11.11.4",
-    "@types/react": "^16.8.8",
-    "@types/tinycolor2": "^1.4.1",
-    "cosmiconfig": "^5.1.0",
-    "prettier": "^1.16.4",
-    "ts-node": "^8.0.3",
-    "typescript": "^3.4.1"
+    "@types/node": "^12.7.1",
+    "@types/react": "^16.9.1",
+    "@types/tinycolor2": "^1.4.2",
+    "@typescript-eslint/eslint-plugin": "1.x",
+    "@typescript-eslint/parser": "1.x",
+    "babel-eslint": "10.x",
+    "cosmiconfig": "^5.2.1",
+    "eslint": "6.x",
+    "eslint-config-prettier": "^6.0.0",
+    "eslint-config-react-app": "^5.0.1",
+    "eslint-plugin-babel": "^5.3.0",
+    "eslint-plugin-flowtype": "3.x",
+    "eslint-plugin-import": "2.x",
+    "eslint-plugin-jsx-a11y": "6.x",
+    "eslint-plugin-prettier": "^3.1.0",
+    "eslint-plugin-react": "7.x",
+    "eslint-plugin-react-hooks": "1.x",
+    "gh-pages": "^2.1.1",
+    "husky": "^3.0.3",
+    "image-type": "^4.1.0",
+    "ink": "^2.3.0",
+    "ink-box": "^1.0.0",
+    "ink-gradient": "^1.0.0",
+    "ink-spinner": "^3.0.1",
+    "lint-staged": "^9.2.1",
+    "parcel-bundler": "^1.12.3",
+    "prettier": "^1.18.2",
+    "react": "^16.9.0",
+    "tinycolor2": "^1.4.1",
+    "ts-node": "^8.3.0",
+    "typescript": "3.4.5",
+    "use-interval": "^1.1.0"
+  },
+  "scripts": {
+    "build": "parcel build src/index.tsx --out-dir bin --target node --bundle-node-modules --out-file figmint.js && yarn build-types",
+    "watch": "parcel watch src/index.tsx --out-dir bin --target node --bundle-node-modules --out-file figmint.js",
+    "type-check": "tsc --noEmit",
+    "build-types": "tsc src/utils/types.ts --outDir bin --declaration --emitDeclarationOnly",
+    "lint": "eslint '**/*.{js,jsx,ts,tsx}'",
+    "gh-pages": "gh-pages -d example/dist -m \"Update Github pages\""
   }
 }

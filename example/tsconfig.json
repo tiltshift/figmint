@@ -3,7 +3,9 @@
     "target": "esnext",
     "module": "commonjs",
     "moduleResolution": "node",
+    "allowJs": true,
     "jsx": "react",
+    "noEmit": true,
     "strict": true,
     "alwaysStrict": true,
     "strictBindCallApply": true,
@@ -25,6 +27,5 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "resolveJsonModule": true
-  },
-  "exclude": ["node_modules", "bin", "example"]
+  }
 }
