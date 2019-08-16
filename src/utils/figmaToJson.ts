@@ -3,7 +3,7 @@ import * as Figma from 'figma-js'
 import {
   figmaColorToHSL,
   RawStyleObject,
-  FigmintFillStyleType,
+  BaseFillStyleType,
   FigmintImage,
   FigmintOutput,
   FigmintSolid,
@@ -12,10 +12,10 @@ import {
 
 export const figmaToJson = (figmaObject: RawStyleObject): FigmintOutput => {
   const formattedStyles = {
-    fill: [],
+    fills: [],
     text: [],
-    effect: [],
-    grid: [],
+    effects: [],
+    grids: [],
   } as FigmintOutput
 
   Object.values(figmaObject).forEach((style) => {
@@ -28,7 +28,7 @@ export const figmaToJson = (figmaObject: RawStyleObject): FigmintOutput => {
 
     switch (style.styleType) {
       case 'FILL': {
-        const fillStyles = [] as FigmintFillStyleType[]
+        const fillStyles = [] as BaseFillStyleType[]
 
         styleProps = style.props as Figma.Paint[]
 
@@ -36,7 +36,7 @@ export const figmaToJson = (figmaObject: RawStyleObject): FigmintOutput => {
           let workingStyle = {
             type: fill.type,
             blendMode: fill.blendMode,
-          } as FigmintFillStyleType
+          } as BaseFillStyleType
 
           switch (fill.type) {
             case 'SOLID':
@@ -72,7 +72,7 @@ export const figmaToJson = (figmaObject: RawStyleObject): FigmintOutput => {
                         : handlePositions[index].y,
                     x:
                       fill.type === 'GRADIENT_LINEAR'
-                        ? null
+                        ? undefined
                         : handlePositions[index].x,
                   }
                 }),
@@ -95,7 +95,7 @@ export const figmaToJson = (figmaObject: RawStyleObject): FigmintOutput => {
           fillStyles.unshift(workingStyle)
         })
 
-        formattedStyles.fill.push({
+        formattedStyles.fills.push({
           ...baseStyle,
           styles: fillStyles,
         })

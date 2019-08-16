@@ -7,19 +7,22 @@
     "start": "parcel index.html",
     "build": "parcel build index.html",
     "figmint": "node ../bin/figmint.js",
-    "watch": "node ../bin/figmint.js watch"
+    "watch": "node ../bin/figmint.js watch",
+    "postinstall": "relative-deps"
   },
   "dependencies": {
+    "figmint": "^0.1.0",
+    "react": "^16.9.0",
     "react-dom": "^16.9.0"
-  },
-  "alias": {
-    "react": "../node_modules/react",
-    "scheduler/tracing": "../node_modules/scheduler/tracing-profiling"
   },
   "devDependencies": {
     "@types/react": "^16.9.1",
     "@types/react-dom": "^16.8.5",
     "parcel": "^1.12.3",
+    "relative-deps": "^0.1.2",
     "typescript": "3.4.5"
+  },
+  "relativeDependencies": {
+    "figmint": "../"
   }
 }

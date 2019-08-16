@@ -4,7 +4,6 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "jsx": "react",
-    "noEmit": true,
     "strict": true,
     "alwaysStrict": true,
     "strictBindCallApply": true,
@@ -27,5 +26,5 @@
     "emitDecoratorMetadata": true,
     "resolveJsonModule": true
   },
-  "exclude": ["node_modules", "lib"]
+  "exclude": ["node_modules", "bin", "example"]
 }

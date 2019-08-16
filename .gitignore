@@ -3,6 +3,11 @@ node_modules
 lib
 yarn-error.log
 dist
-bin
+
+bin/figmint.js
+bin/figmint.js.map
+bin/types.d.ts
+
 .cache
 example/figma
+/example/yarn.lock

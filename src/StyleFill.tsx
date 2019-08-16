@@ -1,10 +1,11 @@
 import * as React from 'react'
 
 import { Text, Box, Color } from 'ink'
+// @ts-ignore
 import Gradient from 'ink-gradient'
 import tinycolor from 'tinycolor2'
 
-import { FigmintStyle, FigmintFillStyleType } from './utils'
+import { FigmintFillStyleType } from './utils'
 
 import { StyleBase } from './StyleBase'
 
@@ -15,7 +16,7 @@ const Preview: React.FC = () => (
 )
 
 export const StyleFill: React.FC<{
-  fill: FigmintStyle<FigmintFillStyleType>
+  fill: FigmintFillStyleType
 }> = ({ fill }) => (
   <StyleBase name={fill.name}>
     <Box flexDirection="column">

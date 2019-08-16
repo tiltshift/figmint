@@ -2,12 +2,12 @@ import * as React from 'react'
 
 import { Text, Box, Color } from 'ink'
 
-import { FigmintStyle, FigmintTypeStyleType } from './utils'
+import { FigmintTypeStyleType } from './utils'
 
 import { StyleBase } from './StyleBase'
 
 export const StyleText: React.FC<{
-  text: FigmintStyle<FigmintTypeStyleType>
+  text: FigmintTypeStyleType
 }> = ({ text }) => (
   <StyleBase name={text.name}>
     <Box flexDirection="row">

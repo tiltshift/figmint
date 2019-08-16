@@ -20,9 +20,12 @@ import { Error } from './Error'
 import {
   getStylesFromFile,
   FigmintStyle,
-  FigmintFillStyleType,
-  FigmintTypeStyleType,
+  BaseFillStyleType,
+  BaseTypeStyleType,
 } from './utils'
+
+// export our types for clients to use
+export * from './utils/types'
 
 // clear the console
 process.stdout.write('\x1Bc')
@@ -47,11 +50,11 @@ const Output = () => {
 
   // Data from Figma
   const [fileName, setFileName] = React.useState('')
-  const [fills, setFills] = React.useState<
-    FigmintStyle<FigmintFillStyleType>[]
-  >([])
+  const [fills, setFills] = React.useState<FigmintStyle<BaseFillStyleType>[]>(
+    [],
+  )
   const [typography, setTypography] = React.useState<
-    FigmintStyle<FigmintTypeStyleType>[]
+    FigmintStyle<BaseTypeStyleType>[]
   >([])
 
   // Internal State
@@ -87,8 +90,11 @@ const Output = () => {
       // write out our file
 
       let solidColors = ''
+      let fillNames = ''
+      let textNames = ''
 
-      styles.fill.forEach((fill) => {
+      styles.fills.forEach((fill) => {
+        fillNames += `| '${fill.name}'`
         fill.styles.forEach((style) => {
           if (style.type === 'SOLID') {
             solidColors += `| '${style.color}'`
@@ -96,20 +102,31 @@ const Output = () => {
         })
       })
 
+      styles.text.forEach((text) => {
+        textNames += `| ${text.name}`
+      })
+
       fs.writeFileSync(
         path.join(output, `index.${typescript ? 'ts' : 'js'}`),
         `
-        const styles = ${util.inspect(styles, {
-          depth: Infinity,
-          compact: false,
-        })} ${typescript ? 'as const' : ''}
+        ${typescript ? `import { FigmintOutput } from 'figmint'` : ''}
+
+        const styles${typescript ? ': FigmintOutput' : ''} = ${util.inspect(
+          styles,
+          {
+            depth: Infinity,
+            compact: false,
+          },
+        )}
 
         ${
           typescript
             ? `
-          export type SolidColors = ${solidColors}
-          export type FillNames = typeof styles.fill[number]['name']
-          export type TextNames = typeof styles.text[number]['name']
+          ${
+            solidColors !== '' ? `export type SolidColors = ${solidColors}` : ''
+          }
+          ${fillNames !== '' ? `export type FillNames = ${fillNames}` : ''}
+          ${textNames !== '' ? `export type TextNames = ${textNames}` : ''}
           `
             : ''
         }
@@ -120,7 +137,7 @@ const Output = () => {
       setLoading(false)
 
       // set our local state
-      setFills(styles.fill)
+      setFills(styles.fills)
       setTypography(styles.text)
     }
   }, [client, file, output, typescript])

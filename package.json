@@ -1,13 +1,16 @@
 {
   "name": "figmint",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Sync Between Figma and Your Javascript Project",
   "repository": "https://github.com/tiltshift/figmint",
   "license": "MIT",
   "bin": {
     "figmint": "./bin/figmint.js"
   },
-  "main": "bin/index.js",
+  "main": "bin/figmint.js",
+  "files": [
+    "bin"
+  ],
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
@@ -22,6 +25,10 @@
       "eslint --fix",
       "git add"
     ]
+  },
+  "dependencies": {
+    "figma-js": "^1.8.0",
+    "utils": "^0.3.1"
   },
   "devDependencies": {
     "@babel/core": "^7.5.5",
@@ -48,7 +55,6 @@
     "eslint-plugin-prettier": "^3.1.0",
     "eslint-plugin-react": "7.x",
     "eslint-plugin-react-hooks": "1.x",
-    "figma-js": "^1.8.0",
     "husky": "^3.0.3",
     "image-type": "^4.1.0",
     "ink": "^2.3.0",
@@ -65,9 +71,10 @@
     "use-interval": "^1.1.0"
   },
   "scripts": {
-    "build": "parcel build src/index.tsx --out-dir bin --target node --bundle-node-modules --out-file figmint.js",
+    "build": "parcel build src/index.tsx --out-dir bin --target node --bundle-node-modules --out-file figmint.js && yarn build-types",
     "watch": "parcel watch src/index.tsx --out-dir bin --target node --bundle-node-modules --out-file figmint.js",
-    "type-check": "tsc",
+    "type-check": "tsc --noEmit",
+    "build-types": "tsc src/utils/types.ts --outDir bin --declaration --emitDeclarationOnly",
     "lint": "eslint '**/*.{js,jsx,ts,tsx}'"
   }
 }
