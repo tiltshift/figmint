@@ -2,7 +2,7 @@ import * as Figma from 'figma-js'
 
 import { RawStyleObject, RawStyleType } from './'
 import { figmaToJson } from './figmaToJson'
-import { downloadFillImage } from './downloadFillImage'
+import { downloadFillImage } from './downloadImages'
 
 export const getStylesFromFile = async (
   file: Figma.FileResponse,

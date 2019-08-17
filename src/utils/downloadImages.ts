@@ -4,7 +4,7 @@ import path from 'path'
 
 import imageType from 'image-type'
 
-import { ImageFill } from './'
+import { ImageFill } from '.'
 
 const downloadImage = function(image: ImageFill, outFile: string) {
   const file = fs.createWriteStream(outFile)
