@@ -25,6 +25,7 @@ import {
   downloadImage,
 } from './utils'
 import { exportFormatOptions } from 'figma-js'
+import { StyleExport } from './StyleExport'
 
 // export our types for clients to use
 export * from './utils/types'
@@ -54,6 +55,7 @@ const Output = () => {
   const [fileName, setFileName] = React.useState('')
   const [fills, setFills] = React.useState<FigmintFillStyleType[]>([])
   const [typography, setTypography] = React.useState<FigmintTypeStyleType[]>([])
+  const [exports, setExports] = React.useState<FigmintExportType[]>([])
 
   // Internal State
   const [loading, setLoading] = React.useState(true)
@@ -200,6 +202,7 @@ const Output = () => {
       // set our local state
       setFills(styles.fillStyles)
       setTypography(styles.textStyles)
+      setExports(styles.exports)
     }
   }, [addImageUrlToExport, client, file, output, typescript])
 
@@ -302,6 +305,12 @@ const Output = () => {
           <Header text="Text Styles" />
           {typography.map((text) => (
             <StyleText key={text.key} text={text} />
+          ))}
+        </Box>
+        <Box flexDirection="column">
+          <Header text="Exports" />
+          {exports.map((file) => (
+            <StyleExport key={file.url} image={file} />
           ))}
         </Box>
       </Box>

@@ -80,5 +80,5 @@ export type FigmintOutput = {
   textStyles: FigmintTypeStyleType[]
   effectStyles: any[]
   gridStyles: any[]
-  exports: FigmintExportType[]
+  exports: Required<FigmintExportType>[]
 }

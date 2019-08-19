@@ -4,6 +4,7 @@ import styles from '../figma'
 
 import { Fills } from './Fills'
 import { Text } from './Text'
+import { Exports } from './Exports'
 
 export const App: React.FC = () => {
   return (
@@ -19,6 +20,7 @@ export const App: React.FC = () => {
       <div style={{ display: 'flex' }}>
         <Fills fillStyles={styles.fillStyles} />
         <Text textStyles={styles.textStyles} />
+        <Exports exports={styles.exports} />
       </div>
     </div>
   )

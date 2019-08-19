@@ -1,6 +1,6 @@
 # 🍃 Figmint
 
-Figmint can sync styles from a file in figma to json that can be used in a javascript project.
+Figmint can sync styles and exports from a file in figma to json that can be used in a javascript project.
 
 ![example image](https://cl.ly/c83a5bd33aeb/Frame.png)
 
@@ -12,8 +12,9 @@ It also comes with a snazzy CLI:
 
 🚨*Notes*:
 
-- Currently only Fill styles and Text styles are supported. PR's welcome for Grid and Effect styles!
+- Currently only Fill styles, Text styles, and exports are supported. PR's welcome for Grid and Effect styles!
 - Figmint will only pick up a style if it is used in the file you pass it. If you are finding a style isn't syncing make sure an element in the file is using that style.
+- Exports work only with with scale values (2x for example) and not with width or height values (512w). This is a limitation of the figma API.
 
 ## Install and Config
 
@@ -23,7 +24,19 @@ It also comes with a snazzy CLI:
 yarn add figmint --dev
 ```
 
-#### 2. Setup your config:
+#### 2. Setup your figma file
+
+Setup a file that includes elements that use all the figma styles you want to export. These can either be local or from libraries, but every style you want to export needs to be used in the file you point `figmint` at.
+
+Figmint will also pick up exports for the file in qustion. This can be useful for icons, illustrations, etc. For this to work make sure you have an export setup on the image you want to export.
+
+![export](https://cl.ly/9b3c6d4d0c7a/Screen%252520Shot%2525202019-08-18%252520at%2525208.35.14%252520PM.png)
+
+Figmint is able to pick up the file type and scale, as long as you use something like `2x` and not `512w` or `512h` (figma's API is limited in this regard.)
+
+Currently figmint is setup to read the name of the parent to decide what directory to put the export in. For example you can group all your icons together in a layer named `icons` to make sure all icons end up in a `icons` folder when synced to your project.
+
+#### 3. Setup your config:
 
 Add a `.figmintrc.json` file to your project.
 
@@ -38,7 +51,7 @@ The required options are a [`token`](https://www.figma.com/developers/docs#acces
 }
 ```
 
-#### 3. Run Figmint
+#### 4. Run Figmint
 
 You can now run figmint via the CLI:
 
@@ -46,11 +59,11 @@ You can now run figmint via the CLI:
 yarn run figmint
 ```
 
-#### 4. 💰Profit!
+#### 5. 💰Profit!
 
 At this point if everything went as planned you should have a new folder called `figmaStyles` in your project. Check the `index` file in this folder to see the styles exported from figma.
 
-#### 5. Extra Credit
+#### 6. Extra Credit
 
 See [Config format](#config-format) and [Config options](#config-options) below for more info on how to configure figmint including typescript support and chaging the output folder.
 
