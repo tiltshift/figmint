@@ -1,6 +1,6 @@
 {
   "name": "figmint",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Sync Between Figma and Your Javascript Project",
   "repository": "https://github.com/tiltshift/figmint",
   "license": "MIT",
