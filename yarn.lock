@@ -3195,10 +3195,10 @@ fastq@^1.6.0:
   dependencies:
     reusify "^1.0.0"
 
-figma-js@^1.8.1:
-  version "1.8.1"
-  resolved "https://registry.yarnpkg.com/figma-js/-/figma-js-1.8.1.tgz#a04b0dcdf4152f2e313ee16d875e2a431fcdd3db"
-  integrity sha512-KU6+A2/oSggjGM/qL+RvHO+370FZisC1VhkKvOXYppG/5THhtd+A4jCcxjfK+YSevNUVsZDbR0LjR0qVYc/6JQ==
+figma-js@^1.8.3:
+  version "1.8.3"
+  resolved "https://registry.yarnpkg.com/figma-js/-/figma-js-1.8.3.tgz#bc41f5e1cc59b4f6755d7074abcfd4637a1e7bb5"
+  integrity sha512-0yiCv2/zJg1T9bEeX2lpwZ/x6Nk+UyEA6iBZZUzDs9Qv0t6vf8VhdSBskn7V79xs0JkeG2Ip5mWI5B2hT0rqSQ==
   dependencies:
     axios "^0.18.0"
 

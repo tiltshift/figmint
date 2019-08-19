@@ -16,6 +16,7 @@ export const figmaToJson = (figmaObject: RawStyleObject): FigmintOutput => {
     textStyles: [],
     effectStyles: [],
     gridStyles: [],
+    exports: [],
   } as FigmintOutput
 
   Object.values(figmaObject).forEach((style) => {

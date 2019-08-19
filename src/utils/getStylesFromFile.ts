@@ -1,8 +1,8 @@
 import * as Figma from 'figma-js'
 
-import { RawStyleObject, RawStyleType } from './'
+import { RawStyleObject, RawStyleType, ExportsObject } from './'
 import { figmaToJson } from './figmaToJson'
-import { downloadFillImage } from './downloadFillImage'
+import { downloadFillImage } from './downloadImages'
 
 export const getStylesFromFile = async (
   file: Figma.FileResponse,
@@ -11,10 +11,14 @@ export const getStylesFromFile = async (
 ) => {
   const styleDefinitions = Object.keys(file.styles)
 
-  const styleValues = findStyleInNode(styleDefinitions, file.document)
+  const { styles: styleValues, exports } = findStyleInNode(
+    styleDefinitions,
+    file.document,
+  )
 
   let fileName: string | undefined
 
+  // download fill images
   for (const [key, style] of Object.entries(styleValues)) {
     // if we're an image fill grab the image url
     if (file.styles[key].styleType === 'FILL') {
@@ -40,17 +44,31 @@ export const getStylesFromFile = async (
     }
   }
 
-  return figmaToJson(styleValues)
+  return { styles: figmaToJson(styleValues), exports }
 }
 
 // work through the node and its children to attach all style definitions to the style types
 const findStyleInNode = (
   keysToFind: string[],
   node: Figma.Node,
+  parent?: Figma.Node,
   styles: RawStyleObject = {},
-): RawStyleObject => {
+  exports: ExportsObject = {},
+) => {
   let finalStyles = styles
+  let finalExports = exports
 
+  if (
+    'exportSettings' in node &&
+    node.exportSettings !== undefined &&
+    node.exportSettings.length > 0
+  ) {
+    finalExports[node.id] = {
+      exportInfo: node.exportSettings,
+      name: node.name,
+      folder: parent ? parent.name : '',
+    }
+  }
   if ('styles' in node && node.styles !== undefined) {
     Object.entries(node.styles).forEach(([styleType, key]) => {
       if (!(key in styles)) {
@@ -92,14 +110,24 @@ const findStyleInNode = (
   }
 
   if ('children' in node) {
-    node.children.forEach(
-      (child) =>
-        (finalStyles = {
-          ...finalStyles,
-          ...findStyleInNode(keysToFind, child, styles),
-        }),
-    )
+    node.children.forEach((child) => {
+      const { styles: childStyles, exports: childExports } = findStyleInNode(
+        keysToFind,
+        child,
+        node,
+        styles,
+        finalExports,
+      )
+      finalStyles = {
+        ...finalStyles,
+        ...childStyles,
+      }
+      finalExports = {
+        ...finalExports,
+        ...childExports,
+      }
+    })
   }
 
-  return finalStyles
+  return { styles: finalStyles, exports: finalExports }
 }

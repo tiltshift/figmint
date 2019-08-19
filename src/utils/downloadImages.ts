@@ -4,13 +4,13 @@ import path from 'path'
 
 import imageType from 'image-type'
 
-import { ImageFill } from './'
+import { ImageFill } from '.'
 
-const downloadImage = function(image: ImageFill, outFile: string) {
+export const downloadImage = function(url: string, outFile: string) {
   const file = fs.createWriteStream(outFile)
 
   https
-    .get(image.url, function(response) {
+    .get(url, function(response) {
       response.pipe(file)
       file.on('finish', function() {
         file.close()
@@ -46,7 +46,7 @@ export const downloadFillImage = (image: ImageFill, outputDir: string) => {
             `${image.imageRef}.${imageExt.ext}`,
           )
 
-          downloadImage(image, outFile)
+          downloadImage(image.url, outFile)
 
           resolve(outFile)
         }
@@ -54,3 +54,5 @@ export const downloadFillImage = (image: ImageFill, outputDir: string) => {
     })
   })
 }
+
+export const downloadExports = () => {}

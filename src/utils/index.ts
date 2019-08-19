@@ -5,6 +5,6 @@ export const figmaColorToHSL = (figmaColor: Figma.Color) =>
   tinycolor.fromRatio(figmaColor).toHslString()
 
 export * from './types'
-export * from './downloadFillImage'
+export * from './downloadImages'
 export * from './figmaToJson'
 export * from './getStylesFromFile'

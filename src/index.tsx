@@ -15,13 +15,18 @@ import { StyleFill } from './StyleFill'
 import { StyleText } from './StyleText'
 
 import { Frame } from './Frame'
-import { Error } from './Error'
+import { ErrorBox } from './Error'
 
 import {
   getStylesFromFile,
   FigmintFillStyleType,
   FigmintTypeStyleType,
+  FigmintExportType,
+  downloadImage,
+  PartialFigmintExportType,
 } from './utils'
+import { exportFormatOptions } from 'figma-js'
+import { StyleExport } from './StyleExport'
 
 // export our types for clients to use
 export * from './utils/types'
@@ -51,12 +56,30 @@ const Output = () => {
   const [fileName, setFileName] = React.useState('')
   const [fills, setFills] = React.useState<FigmintFillStyleType[]>([])
   const [typography, setTypography] = React.useState<FigmintTypeStyleType[]>([])
+  const [exports, setExports] = React.useState<FigmintExportType[]>([])
 
   // Internal State
   const [loading, setLoading] = React.useState(true)
   const [hasConfig, setHasConfig] = React.useState(false)
   const [watching] = React.useState(process.argv.slice(2)[0] === 'watch')
   const [client, setClient] = React.useState<Figma.ClientInterface>()
+
+  // Function to get an image URL from figma given some params
+
+  const addImageUrlToExport = React.useCallback(
+    async (image: PartialFigmintExportType) => {
+      if (client && file) {
+        const imageResponse = await client.fileImages(file, {
+          ...image,
+          ids: [image.id],
+        })
+
+        return { ...image, url: imageResponse.data.images[image.id] }
+      }
+      throw new Error('client and file needed to run this function')
+    },
+    [client, file],
+  )
 
   // 📡 Function to connect to Figma and get the data we need
   // --------------------------------------------------------
@@ -76,11 +99,60 @@ const Output = () => {
       }
 
       // combine the style meta data with the actual style info
-      const styles = await getStylesFromFile(
+      const { styles, exports } = await getStylesFromFile(
         fileResponse.data,
         imageFillsResponse.data,
         output,
       )
+
+      // 🖼 time to get export images!
+
+      const finalExports: PartialFigmintExportType[] = []
+
+      // first we look at all the various exports found in the file.
+      // We need to note the scale and format so we can ask for images
+      // of the right type and format from the figma API.
+
+      Object.entries(exports).forEach(([key, info]) => {
+        info.exportInfo.forEach((image) => {
+          finalExports.push({
+            id: key,
+            format: image.format.toLowerCase() as exportFormatOptions,
+            scale:
+              image.constraint.type === 'SCALE' ? image.constraint.value : 1,
+          })
+        })
+      })
+
+      // Once we know everything we need about our exports we fetch the image URL's from figma
+      // At the moment we do this one at a time, but it might be possible in the future to group
+      // by file type and sacle.
+
+      const exportsInfo = await Promise.all(
+        finalExports.map((image) => addImageUrlToExport(image)),
+      )
+
+      styles.exports = exportsInfo.map((image) => {
+        const exportInfo = exports[image.id]
+
+        const outDirectory = path.join(output, 'exports', exportInfo.folder)
+        const outFile = `${exportInfo.name}.${image.format}`
+        const url = path.join(outDirectory, outFile)
+
+        // make sure the directory for this image exists directory exists
+        if (!fs.existsSync(outDirectory)) {
+          fs.mkdirSync(outDirectory, { recursive: true })
+        }
+
+        downloadImage(image.url, url)
+
+        return {
+          ...image,
+          url: url,
+          directory: outDirectory,
+          file: outFile,
+        } as Required<FigmintExportType>
+      })
 
       // write out our file
 
@@ -134,8 +206,9 @@ const Output = () => {
       // set our local state
       setFills(styles.fillStyles)
       setTypography(styles.textStyles)
+      setExports(styles.exports)
     }
-  }, [client, file, output, typescript])
+  }, [addImageUrlToExport, client, file, output, typescript])
 
   // ⚓️ Hooks!
   // ---------
@@ -192,10 +265,10 @@ const Output = () => {
   if (!hasConfig) {
     return (
       <Frame>
-        <Error>
+        <ErrorBox>
           Figmint requires a config.
           (https://github.com/tiltshift/figmint#config)
-        </Error>
+        </ErrorBox>
       </Frame>
     )
   }
@@ -203,9 +276,9 @@ const Output = () => {
   if (!client) {
     return (
       <Frame>
-        <Error>
+        <ErrorBox>
           Figma Token is required. (https://github.com/tiltshift/figmint#token)
-        </Error>
+        </ErrorBox>
       </Frame>
     )
   }
@@ -213,9 +286,9 @@ const Output = () => {
   if (!file) {
     return (
       <Frame>
-        <Error>
+        <ErrorBox>
           Figma File is required. (https://github.com/tiltshift/figmint#file)
-        </Error>
+        </ErrorBox>
       </Frame>
     )
   }
@@ -236,6 +309,12 @@ const Output = () => {
           <Header text="Text Styles" />
           {typography.map((text) => (
             <StyleText key={text.key} text={text} />
+          ))}
+        </Box>
+        <Box flexDirection="column">
+          <Header text="Exports" />
+          {exports.map((file) => (
+            <StyleExport key={file.url} image={file} />
           ))}
         </Box>
       </Box>
