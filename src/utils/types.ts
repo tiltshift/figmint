@@ -1,4 +1,5 @@
 import * as Figma from 'figma-js'
+import { exportFormatOptions } from 'figma-js'
 
 export type RawPropObject =
   | Figma.TypeStyle
@@ -9,7 +10,19 @@ export type RawStyleType = Figma.Style & {
   fileName?: string
 }
 
-export type RawStyleObject = { [key: string]: RawStyleType }
+export type ExportType = Figma.ExportSetting
+
+export type ExportsObject = {
+  [key: string]: {
+    name: string
+    folder: string
+    exportInfo: Readonly<ExportType[]>
+  }
+}
+
+export type RawStyleObject = {
+  [key: string]: RawStyleType
+}
 
 export interface FigmintPaintBase {
   type: Figma.PaintType
@@ -53,9 +66,19 @@ export type FigmintStyle<T> = {
 export type FigmintFillStyleType = FigmintStyle<BaseFillStyleType>
 export type FigmintTypeStyleType = FigmintStyle<BaseTypeStyleType>
 
+export type FigmintExportType = {
+  id: string
+  format: exportFormatOptions
+  scale: number
+  url?: string
+  directory?: string
+  file?: string
+}
+
 export type FigmintOutput = {
   fillStyles: FigmintFillStyleType[]
   textStyles: FigmintTypeStyleType[]
   effectStyles: any[]
   gridStyles: any[]
+  exports: FigmintExportType[]
 }

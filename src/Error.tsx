@@ -5,7 +5,7 @@ import { Color } from 'ink'
 // @ts-ignore
 import BorderBox from 'ink-box'
 
-export const Error: React.FC = ({ children }) => (
+export const ErrorBox: React.FC = ({ children }) => (
   <BorderBox
     borderStyle="round"
     borderColor="red"
