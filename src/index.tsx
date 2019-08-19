@@ -23,6 +23,7 @@ import {
   FigmintTypeStyleType,
   FigmintExportType,
   downloadImage,
+  PartialFigmintExportType,
 } from './utils'
 import { exportFormatOptions } from 'figma-js'
 import { StyleExport } from './StyleExport'
@@ -66,7 +67,7 @@ const Output = () => {
   // Function to get an image URL from figma given some params
 
   const addImageUrlToExport = React.useCallback(
-    async (image: FigmintExportType) => {
+    async (image: PartialFigmintExportType) => {
       if (client && file) {
         const imageResponse = await client.fileImages(file, {
           ...image,
@@ -106,7 +107,7 @@ const Output = () => {
 
       // 🖼 time to get export images!
 
-      const finalExports: FigmintExportType[] = []
+      const finalExports: PartialFigmintExportType[] = []
 
       // first we look at all the various exports found in the file.
       // We need to note the scale and format so we can ask for images
@@ -127,11 +128,11 @@ const Output = () => {
       // At the moment we do this one at a time, but it might be possible in the future to group
       // by file type and sacle.
 
-      let exportsInfo = await Promise.all(
+      const exportsInfo = await Promise.all(
         finalExports.map((image) => addImageUrlToExport(image)),
       )
 
-      exportsInfo = exportsInfo.map((image) => {
+      styles.exports = exportsInfo.map((image) => {
         const exportInfo = exports[image.id]
 
         const outDirectory = path.join(output, 'exports', exportInfo.folder)
@@ -145,7 +146,12 @@ const Output = () => {
 
         downloadImage(image.url, url)
 
-        return { ...image, url: url, directory: outDirectory, file: outFile }
+        return {
+          ...image,
+          url: url,
+          directory: outDirectory,
+          file: outFile,
+        } as Required<FigmintExportType>
       })
 
       // write out our file
@@ -153,8 +159,6 @@ const Output = () => {
       let solidColors = ''
       let fillNames = ''
       let textNames = ''
-
-      styles.exports = exportsInfo
 
       styles.fillStyles.forEach((fill) => {
         fillNames += `| '${fill.name}'`

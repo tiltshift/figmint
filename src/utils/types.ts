@@ -66,7 +66,7 @@ export type FigmintStyle<T> = {
 export type FigmintFillStyleType = FigmintStyle<BaseFillStyleType>
 export type FigmintTypeStyleType = FigmintStyle<BaseTypeStyleType>
 
-export type FigmintExportType = {
+export type PartialFigmintExportType = {
   id: string
   format: exportFormatOptions
   scale: number
@@ -75,10 +75,12 @@ export type FigmintExportType = {
   file?: string
 }
 
+export type FigmintExportType = Required<PartialFigmintExportType>
+
 export type FigmintOutput = {
   fillStyles: FigmintFillStyleType[]
   textStyles: FigmintTypeStyleType[]
   effectStyles: any[]
   gridStyles: any[]
-  exports: Required<FigmintExportType>[]
+  exports: FigmintExportType[]
 }
