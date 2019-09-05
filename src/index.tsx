@@ -34,6 +34,28 @@ export * from './utils/types'
 // clear the console
 process.stdout.write('\x1Bc')
 
+// Local Types
+type DownloadListType = {
+  [formatScale: string]: PartialFigmintExportType[]
+}
+
+type FinalExportsType = {
+  [group: string]: {
+    [fileName: string]: {
+      svg?: PartialFigmintExportType
+      pdf?: PartialFigmintExportType
+      png?: {
+        [scale: number]: PartialFigmintExportType
+      }
+      jpg?: {
+        [scale: number]: PartialFigmintExportType
+      }
+    }
+  }
+}
+
+// Components
+
 const Header = ({ text }: { text: string }) => (
   <Color gray>
     <Box marginBottom={1}>
@@ -56,7 +78,7 @@ const Output = () => {
   const [fileName, setFileName] = React.useState('')
   const [fills, setFills] = React.useState<FigmintFillStyleType[]>([])
   const [typography, setTypography] = React.useState<FigmintTypeStyleType[]>([])
-  const [exports, setExports] = React.useState<FigmintExportType[]>([])
+  const [exports, setExports] = React.useState<FigmintExportType>()
 
   // Internal State
   const [loading, setLoading] = React.useState(true)
@@ -66,20 +88,111 @@ const Output = () => {
 
   // Function to get an image URL from figma given some params
 
-  const addImageUrlToExport = React.useCallback(
-    async (image: PartialFigmintExportType) => {
+  const fetchAndAddImageUrls = React.useCallback(
+    async (downloadLists: DownloadListType, finalExports: FinalExportsType) => {
       if (client && file) {
-        const imageResponse = await client.fileImages(file, {
-          ...image,
-          ids: [image.id],
-        })
+        await Promise.all(
+          Object.keys(downloadLists).map(async (format) => {
+            if (downloadLists[format].length > 0) {
+              let imageResponse
 
-        return { ...image, url: imageResponse.data.images[image.id] }
+              // first we get the image urls from figma based on format and scale
+              if (format === 'svg' || format === 'pdf') {
+                imageResponse = await client.fileImages(file, {
+                  format,
+                  ids: downloadLists[format].map((image) => image.id),
+                })
+              } else {
+                imageResponse = await client.fileImages(file, {
+                  format: downloadLists[format][0].format,
+                  scale: downloadLists[format][0].scale,
+                  ids: downloadLists[format].map((image) => image.id),
+                })
+              }
+
+              // next we use these urls to download the images and add the url and file info to our exports object
+              Object.entries(imageResponse.data.images).forEach(([id, url]) => {
+                const image = downloadLists[format].find(
+                  (image) => image.id === id,
+                )
+
+                if (image) {
+                  // store images based on group
+                  const outDirectory = path.join(output, 'exports', image.group)
+
+                  // image file name based on format and scale
+                  const outFile = `${image.name}${
+                    image.scale > 1 ? `@${image.scale}x` : ''
+                  }.${image.format}`
+
+                  const outUrl = path.join(outDirectory, outFile)
+
+                  // make sure the directory for this image exists directory exists
+                  if (!fs.existsSync(outDirectory)) {
+                    fs.mkdirSync(outDirectory, { recursive: true })
+                  }
+
+                  downloadImage(url, outUrl)
+
+                  if (image.format === 'png' || image.format === 'jpg') {
+                    finalExports[image.group][image.name][image.format]![
+                      image.scale
+                    ] = {
+                      ...finalExports[image.group][image.name][image.format]![
+                        image.scale
+                      ],
+                      url: outUrl,
+                      directory: outDirectory,
+                      file: outFile,
+                    }
+                  } else {
+                    finalExports[image.group][image.name][image.format] = {
+                      ...finalExports[image.group][image.name][image.format]!,
+                      url: outUrl,
+                      directory: outDirectory,
+                      file: outFile,
+                    }
+                  }
+                }
+              })
+            }
+          }),
+        )
+
+        return finalExports
       }
       throw new Error('client and file needed to run this function')
     },
-    [client, file],
+    [client, file, output],
   )
+
+  // const addImageUrlsToExport = React.useCallback(
+  //   async (exports: PartialFigmintExportType[]) => {
+  //     if (client && file) {
+  //       const exportsByType: { [key: string]: PartialFigmintExportType[] } = {
+  //         jpg: [],
+  //         svg: [],
+  //         png: [],
+  //         pdf: [],
+  //       }
+  //
+  //       Object.keys(exportsByType).forEach((key) => {
+  //         exportsByType[key] = exports.filter((image) => {
+  //           return image.format === key
+  //         })
+  //       })
+  //
+  //       const imageResponse = await client.fileImages(file, {
+  //         ...image,
+  //         ids: [image.id],
+  //       })
+  //
+  //       return { ...image, url: imageResponse.data.images[image.id] }
+  //     }
+  //     throw new Error('client and file needed to run this function')
+  //   },
+  //   [client, file],
+  // )
 
   // 📡 Function to connect to Figma and get the data we need
   // --------------------------------------------------------
@@ -107,52 +220,71 @@ const Output = () => {
 
       // 🖼 time to get export images!
 
-      const finalExports: PartialFigmintExportType[] = []
+      const finalExports: FinalExportsType = {}
+
+      const downloadLists: DownloadListType = {}
 
       // first we look at all the various exports found in the file.
       // We need to note the scale and format so we can ask for images
       // of the right type and format from the figma API.
 
-      Object.entries(exports).forEach(([key, info]) => {
+      Object.entries(exports).forEach(([id, info]) => {
         info.exportInfo.forEach((image) => {
-          finalExports.push({
-            id: key,
-            format: image.format.toLowerCase() as exportFormatOptions,
-            scale:
-              image.constraint.type === 'SCALE' ? image.constraint.value : 1,
-          })
+          const name = info.name
+          const group = info.folder
+          const format = image.format.toLowerCase() as exportFormatOptions
+          const scale =
+            image.constraint.type === 'SCALE' ? image.constraint.value : 1
+
+          const imageDetails = {
+            id,
+            format,
+            group,
+            name,
+            scale,
+          }
+
+          if (!(group in finalExports)) {
+            finalExports[group] = {}
+          }
+
+          if (!(name in finalExports[group])) {
+            finalExports[group][name] = {}
+          }
+
+          // vector images don't have a scale
+          if (format === 'svg' || format === 'pdf') {
+            finalExports[group][name][format] = imageDetails
+
+            if (!(format in downloadLists)) {
+              downloadLists[format] = []
+            }
+
+            downloadLists[format].push(imageDetails)
+          } else if (format === 'png' || format === 'jpg') {
+            if (!(format in finalExports[group][name])) {
+              finalExports[group][name][format] = {}
+            }
+            finalExports[group][name][format]![scale] = imageDetails
+
+            const formatScale = format + `@${scale}x`
+
+            if (!(formatScale in downloadLists)) {
+              downloadLists[formatScale] = []
+            }
+
+            downloadLists[formatScale].push(imageDetails)
+          }
         })
       })
 
       // Once we know everything we need about our exports we fetch the image URL's from figma
-      // At the moment we do this one at a time, but it might be possible in the future to group
-      // by file type and sacle.
+      // we group these by file type to reduce the number of requests.
 
-      const exportsInfo = await Promise.all(
-        finalExports.map((image) => addImageUrlToExport(image)),
-      )
-
-      styles.exports = exportsInfo.map((image) => {
-        const exportInfo = exports[image.id]
-
-        const outDirectory = path.join(output, 'exports', exportInfo.folder)
-        const outFile = `${exportInfo.name}.${image.format}`
-        const url = path.join(outDirectory, outFile)
-
-        // make sure the directory for this image exists directory exists
-        if (!fs.existsSync(outDirectory)) {
-          fs.mkdirSync(outDirectory, { recursive: true })
-        }
-
-        downloadImage(image.url, url)
-
-        return {
-          ...image,
-          url: url,
-          directory: outDirectory,
-          file: outFile,
-        } as Required<FigmintExportType>
-      })
+      styles.exports = (await fetchAndAddImageUrls(
+        downloadLists,
+        finalExports,
+      )) as FigmintExportType
 
       // write out our file
 
@@ -208,7 +340,7 @@ const Output = () => {
       setTypography(styles.textStyles)
       setExports(styles.exports)
     }
-  }, [addImageUrlToExport, client, file, output, typescript])
+  }, [client, fetchAndAddImageUrls, file, output, typescript])
 
   // ⚓️ Hooks!
   // ---------
@@ -322,4 +454,4 @@ const Output = () => {
   )
 }
 
-render(<Output />)
+render(<Output />, { debug: true })
