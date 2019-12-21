@@ -3,7 +3,7 @@ import useInterval from 'use-interval'
 
 import * as Figma from 'figma-js'
 
-import cosmiconfig from 'cosmiconfig'
+import { cosmiconfig } from 'cosmiconfig'
 
 import fs from 'fs'
 import path from 'path'
@@ -215,29 +215,32 @@ const Output = () => {
 
   // 🛠 Initial Setup
   React.useEffect(() => {
-    const explorer = cosmiconfig('figmint')
+    const processConfig = async () => {
+      const explorer = cosmiconfig('figmint')
 
-    const configResult = explorer.searchSync()
+      const configResult = await explorer.search()
 
-    if (configResult) {
-      setHasConfig(true)
+      if (configResult) {
+        setHasConfig(true)
 
-      if ('token' in configResult.config) {
-        setToken(configResult.config.token)
-      }
+        if ('token' in configResult.config) {
+          setToken(configResult.config.token)
+        }
 
-      if ('file' in configResult.config) {
-        setFile(configResult.config.file)
-      }
+        if ('file' in configResult.config) {
+          setFile(configResult.config.file)
+        }
 
-      if ('output' in configResult.config) {
-        setOutput(configResult.config.output)
-      }
+        if ('output' in configResult.config) {
+          setOutput(configResult.config.output)
+        }
 
-      if ('typescript' in configResult.config) {
-        setTypescript(configResult.config.typescript)
+        if ('typescript' in configResult.config) {
+          setTypescript(configResult.config.typescript)
+        }
       }
     }
+    processConfig()
 
     if (token) {
       setClient(

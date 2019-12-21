@@ -11,3 +11,4 @@ bin/types.d.ts
 .cache
 example/figma
 /example/yarn.lock
+/example/figmaStyles
