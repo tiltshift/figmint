@@ -26,7 +26,6 @@ import {
   PartialFigmintExportType,
 } from './utils'
 import { exportFormatOptions } from 'figma-js'
-import { StyleExport } from './StyleExport'
 
 // export our types for clients to use
 export * from './utils/types'
@@ -69,7 +68,6 @@ const Output = () => {
   // --------
 
   // Config
-  const [token, setToken] = React.useState('')
   const [file, setFile] = React.useState('')
   const [output, setOutput] = React.useState('figmaStyles')
   const [typescript, setTypescript] = React.useState(false)
@@ -165,34 +163,6 @@ const Output = () => {
     },
     [client, file, output],
   )
-
-  // const addImageUrlsToExport = React.useCallback(
-  //   async (exports: PartialFigmintExportType[]) => {
-  //     if (client && file) {
-  //       const exportsByType: { [key: string]: PartialFigmintExportType[] } = {
-  //         jpg: [],
-  //         svg: [],
-  //         png: [],
-  //         pdf: [],
-  //       }
-  //
-  //       Object.keys(exportsByType).forEach((key) => {
-  //         exportsByType[key] = exports.filter((image) => {
-  //           return image.format === key
-  //         })
-  //       })
-  //
-  //       const imageResponse = await client.fileImages(file, {
-  //         ...image,
-  //         ids: [image.id],
-  //       })
-  //
-  //       return { ...image, url: imageResponse.data.images[image.id] }
-  //     }
-  //     throw new Error('client and file needed to run this function')
-  //   },
-  //   [client, file],
-  // )
 
   // 📡 Function to connect to Figma and get the data we need
   // --------------------------------------------------------
@@ -355,10 +325,6 @@ const Output = () => {
       if (configResult) {
         setHasConfig(true)
 
-        if ('token' in configResult.config) {
-          setToken(configResult.config.token)
-        }
-
         if ('file' in configResult.config) {
           setFile(configResult.config.file)
         }
@@ -370,18 +336,18 @@ const Output = () => {
         if ('typescript' in configResult.config) {
           setTypescript(configResult.config.typescript)
         }
+
+        if (configResult.config.token) {
+          setClient(
+            Figma.Client({
+              personalAccessToken: configResult.config.token,
+            }),
+          )
+        }
       }
     }
     processConfig()
-
-    if (token) {
-      setClient(
-        Figma.Client({
-          personalAccessToken: token,
-        }),
-      )
-    }
-  }, [token, file])
+  }, [])
 
   // 🐶 Initial data fetch
   React.useEffect(() => {
@@ -446,15 +412,19 @@ const Output = () => {
             <StyleText key={text.key} text={text} />
           ))}
         </Box>
-        <Box flexDirection="column">
-          <Header text="Exports" />
-          {exports.map((file) => (
-            <StyleExport key={file.url} image={file} />
-          ))}
-        </Box>
+        {exports && (
+          <Box flexDirection="column">
+            <Header text="Exports" />
+            <Box textWrap="wrap">
+              <Text>
+                Exports are working, but we don't display anything here yet...
+              </Text>
+            </Box>
+          </Box>
+        )}
       </Box>
     </Frame>
   )
 }
 
-render(<Output />, { debug: true })
+render(<Output />)

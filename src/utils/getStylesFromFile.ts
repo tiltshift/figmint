@@ -66,7 +66,7 @@ const findStyleInNode = (
     finalExports[node.id] = {
       exportInfo: node.exportSettings,
       name: node.name,
-      folder: parent ? parent.name : '',
+      folder: parent ? parent.name : 'ungrouped',
     }
   }
   if ('styles' in node && node.styles !== undefined) {
