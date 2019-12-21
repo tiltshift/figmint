@@ -12,15 +12,15 @@
   },
   "dependencies": {
     "figmint": "^0.1.0",
-    "react": "^16.9.0",
-    "react-dom": "^16.9.0"
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0"
   },
   "devDependencies": {
-    "@types/react": "^16.9.1",
-    "@types/react-dom": "^16.8.5",
-    "parcel": "^1.12.3",
-    "relative-deps": "^0.1.2",
-    "typescript": "3.4.5"
+    "@types/react": "^16.9.17",
+    "@types/react-dom": "^16.9.4",
+    "parcel": "^1.12.4",
+    "relative-deps": "^0.2.0",
+    "typescript": "3.7.4"
   },
   "relativeDependencies": {
     "figmint": "../"
