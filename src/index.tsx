@@ -26,13 +26,34 @@ import {
   PartialFigmintExportType,
 } from './utils'
 import { exportFormatOptions } from 'figma-js'
-import { StyleExport } from './StyleExport'
 
 // export our types for clients to use
 export * from './utils/types'
 
 // clear the console
 process.stdout.write('\x1Bc')
+
+// Local Types
+type DownloadListType = {
+  [formatScale: string]: PartialFigmintExportType[]
+}
+
+type FinalExportsType = {
+  [group: string]: {
+    [fileName: string]: {
+      svg?: PartialFigmintExportType
+      pdf?: PartialFigmintExportType
+      png?: {
+        [scale: number]: PartialFigmintExportType
+      }
+      jpg?: {
+        [scale: number]: PartialFigmintExportType
+      }
+    }
+  }
+}
+
+// Components
 
 const Header = ({ text }: { text: string }) => (
   <Color gray>
@@ -47,7 +68,6 @@ const Output = () => {
   // --------
 
   // Config
-  const [token, setToken] = React.useState('')
   const [file, setFile] = React.useState('')
   const [output, setOutput] = React.useState('figmaStyles')
   const [typescript, setTypescript] = React.useState(false)
@@ -56,7 +76,7 @@ const Output = () => {
   const [fileName, setFileName] = React.useState('')
   const [fills, setFills] = React.useState<FigmintFillStyleType[]>([])
   const [typography, setTypography] = React.useState<FigmintTypeStyleType[]>([])
-  const [exports, setExports] = React.useState<FigmintExportType[]>([])
+  const [exports, setExports] = React.useState<FigmintExportType>()
 
   // Internal State
   const [loading, setLoading] = React.useState(true)
@@ -66,19 +86,82 @@ const Output = () => {
 
   // Function to get an image URL from figma given some params
 
-  const addImageUrlToExport = React.useCallback(
-    async (image: PartialFigmintExportType) => {
+  const fetchAndAddImageUrls = React.useCallback(
+    async (downloadLists: DownloadListType, finalExports: FinalExportsType) => {
       if (client && file) {
-        const imageResponse = await client.fileImages(file, {
-          ...image,
-          ids: [image.id],
-        })
+        await Promise.all(
+          Object.keys(downloadLists).map(async (format) => {
+            if (downloadLists[format].length > 0) {
+              let imageResponse
 
-        return { ...image, url: imageResponse.data.images[image.id] }
+              // first we get the image urls from figma based on format and scale
+              if (format === 'svg' || format === 'pdf') {
+                imageResponse = await client.fileImages(file, {
+                  format,
+                  ids: downloadLists[format].map((image) => image.id),
+                })
+              } else {
+                imageResponse = await client.fileImages(file, {
+                  format: downloadLists[format][0].format,
+                  scale: downloadLists[format][0].scale,
+                  ids: downloadLists[format].map((image) => image.id),
+                })
+              }
+
+              // next we use these urls to download the images and add the url and file info to our exports object
+              Object.entries(imageResponse.data.images).forEach(([id, url]) => {
+                const image = downloadLists[format].find(
+                  (image) => image.id === id,
+                )
+
+                if (image) {
+                  // store images based on group
+                  const outDirectory = path.join(output, 'exports', image.group)
+
+                  // image file name based on format and scale
+                  const outFile = `${image.name}${
+                    image.scale > 1 ? `@${image.scale}x` : ''
+                  }.${image.format}`
+
+                  const outUrl = path.join(outDirectory, outFile)
+
+                  // make sure the directory for this image exists directory exists
+                  if (!fs.existsSync(outDirectory)) {
+                    fs.mkdirSync(outDirectory, { recursive: true })
+                  }
+
+                  downloadImage(url, outUrl)
+
+                  if (image.format === 'png' || image.format === 'jpg') {
+                    finalExports[image.group][image.name][image.format]![
+                      image.scale
+                    ] = {
+                      ...finalExports[image.group][image.name][image.format]![
+                        image.scale
+                      ],
+                      url: outUrl,
+                      directory: outDirectory,
+                      file: outFile,
+                    }
+                  } else {
+                    finalExports[image.group][image.name][image.format] = {
+                      ...finalExports[image.group][image.name][image.format]!,
+                      url: outUrl,
+                      directory: outDirectory,
+                      file: outFile,
+                    }
+                  }
+                }
+              })
+            }
+          }),
+        )
+
+        return finalExports
       }
       throw new Error('client and file needed to run this function')
     },
-    [client, file],
+    [client, file, output],
   )
 
   // 📡 Function to connect to Figma and get the data we need
@@ -107,52 +190,71 @@ const Output = () => {
 
       // 🖼 time to get export images!
 
-      const finalExports: PartialFigmintExportType[] = []
+      const finalExports: FinalExportsType = {}
+
+      const downloadLists: DownloadListType = {}
 
       // first we look at all the various exports found in the file.
       // We need to note the scale and format so we can ask for images
       // of the right type and format from the figma API.
 
-      Object.entries(exports).forEach(([key, info]) => {
+      Object.entries(exports).forEach(([id, info]) => {
         info.exportInfo.forEach((image) => {
-          finalExports.push({
-            id: key,
-            format: image.format.toLowerCase() as exportFormatOptions,
-            scale:
-              image.constraint.type === 'SCALE' ? image.constraint.value : 1,
-          })
+          const name = info.name
+          const group = info.folder
+          const format = image.format.toLowerCase() as exportFormatOptions
+          const scale =
+            image.constraint.type === 'SCALE' ? image.constraint.value : 1
+
+          const imageDetails = {
+            id,
+            format,
+            group,
+            name,
+            scale,
+          }
+
+          if (!(group in finalExports)) {
+            finalExports[group] = {}
+          }
+
+          if (!(name in finalExports[group])) {
+            finalExports[group][name] = {}
+          }
+
+          // vector images don't have a scale
+          if (format === 'svg' || format === 'pdf') {
+            finalExports[group][name][format] = imageDetails
+
+            if (!(format in downloadLists)) {
+              downloadLists[format] = []
+            }
+
+            downloadLists[format].push(imageDetails)
+          } else if (format === 'png' || format === 'jpg') {
+            if (!(format in finalExports[group][name])) {
+              finalExports[group][name][format] = {}
+            }
+            finalExports[group][name][format]![scale] = imageDetails
+
+            const formatScale = format + `@${scale}x`
+
+            if (!(formatScale in downloadLists)) {
+              downloadLists[formatScale] = []
+            }
+
+            downloadLists[formatScale].push(imageDetails)
+          }
         })
       })
 
       // Once we know everything we need about our exports we fetch the image URL's from figma
-      // At the moment we do this one at a time, but it might be possible in the future to group
-      // by file type and sacle.
+      // we group these by file type to reduce the number of requests.
 
-      const exportsInfo = await Promise.all(
-        finalExports.map((image) => addImageUrlToExport(image)),
-      )
-
-      styles.exports = exportsInfo.map((image) => {
-        const exportInfo = exports[image.id]
-
-        const outDirectory = path.join(output, 'exports', exportInfo.folder)
-        const outFile = `${exportInfo.name}.${image.format}`
-        const url = path.join(outDirectory, outFile)
-
-        // make sure the directory for this image exists directory exists
-        if (!fs.existsSync(outDirectory)) {
-          fs.mkdirSync(outDirectory, { recursive: true })
-        }
-
-        downloadImage(image.url, url)
-
-        return {
-          ...image,
-          url: url,
-          directory: outDirectory,
-          file: outFile,
-        } as Required<FigmintExportType>
-      })
+      styles.exports = (await fetchAndAddImageUrls(
+        downloadLists,
+        finalExports,
+      )) as FigmintExportType
 
       // write out our file
 
@@ -208,7 +310,7 @@ const Output = () => {
       setTypography(styles.textStyles)
       setExports(styles.exports)
     }
-  }, [addImageUrlToExport, client, file, output, typescript])
+  }, [client, fetchAndAddImageUrls, file, output, typescript])
 
   // ⚓️ Hooks!
   // ---------
@@ -223,10 +325,6 @@ const Output = () => {
       if (configResult) {
         setHasConfig(true)
 
-        if ('token' in configResult.config) {
-          setToken(configResult.config.token)
-        }
-
         if ('file' in configResult.config) {
           setFile(configResult.config.file)
         }
@@ -238,18 +336,18 @@ const Output = () => {
         if ('typescript' in configResult.config) {
           setTypescript(configResult.config.typescript)
         }
+
+        if (configResult.config.token) {
+          setClient(
+            Figma.Client({
+              personalAccessToken: configResult.config.token,
+            }),
+          )
+        }
       }
     }
     processConfig()
-
-    if (token) {
-      setClient(
-        Figma.Client({
-          personalAccessToken: token,
-        }),
-      )
-    }
-  }, [token, file])
+  }, [])
 
   // 🐶 Initial data fetch
   React.useEffect(() => {
@@ -314,12 +412,16 @@ const Output = () => {
             <StyleText key={text.key} text={text} />
           ))}
         </Box>
-        <Box flexDirection="column">
-          <Header text="Exports" />
-          {exports.map((file) => (
-            <StyleExport key={file.url} image={file} />
-          ))}
-        </Box>
+        {exports && (
+          <Box flexDirection="column">
+            <Header text="Exports" />
+            <Box textWrap="wrap">
+              <Text>
+                Exports are working, but we don't display anything here yet...
+              </Text>
+            </Box>
+          </Box>
+        )}
       </Box>
     </Frame>
   )

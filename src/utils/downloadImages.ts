@@ -54,5 +54,3 @@ export const downloadFillImage = (image: ImageFill, outputDir: string) => {
     })
   })
 }
-
-export const downloadExports = () => {}

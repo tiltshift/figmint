@@ -70,17 +70,32 @@ export type PartialFigmintExportType = {
   id: string
   format: exportFormatOptions
   scale: number
+  group: string
+  name: string
   url?: string
   directory?: string
   file?: string
 }
 
-export type FigmintExportType = Required<PartialFigmintExportType>
+export type FigmintExportType = {
+  [group: string]: {
+    [fileName: string]: {
+      svg?: Required<PartialFigmintExportType>
+      pdf?: Required<PartialFigmintExportType>
+      png?: {
+        [scale: number]: Required<PartialFigmintExportType>
+      }
+      jpg?: {
+        [scale: number]: Required<PartialFigmintExportType>
+      }
+    }
+  }
+}
 
 export type FigmintOutput = {
   fillStyles: FigmintFillStyleType[]
   textStyles: FigmintTypeStyleType[]
   effectStyles: any[]
   gridStyles: any[]
-  exports: FigmintExportType[]
+  exports: FigmintExportType
 }
