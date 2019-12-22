@@ -140,3 +140,7 @@ Output supports nested directories, so `some/directory/figma` as output would re
 ###### typescript (default: `false`)
 
 If set to true this will generate typescript types in your export.
+
+## Contributing
+
+make sure to add `#!/usr/bin/env node` to the top of `bin/figma.js` after building as parcel 1 does not do this by default.
