@@ -1,3 +1,7 @@
+import fs from 'fs'
+import path from 'path'
+import rimraf from 'rimraf'
+
 import * as Figma from 'figma-js'
 
 import { RawStyleObject, RawStyleType, ExportsObject } from './'
@@ -19,6 +23,16 @@ export const getStylesFromFile = async (
   let fileName: string | undefined
 
   // download fill images
+
+  const outputDir = path.join(output, 'fillImages')
+
+  // Clear out the output dir if it already exists
+  if (fs.existsSync(outputDir)) {
+    rimraf.sync(outputDir)
+  }
+
+  fs.mkdirSync(outputDir, { recursive: true })
+
   for (const [key, style] of Object.entries(styleValues)) {
     // if we're an image fill grab the image url
     if (file.styles[key].styleType === 'FILL') {
@@ -31,7 +45,7 @@ export const getStylesFromFile = async (
               imageRef: fill.imageRef,
               url: imageFills.meta.images[fill.imageRef],
             },
-            output,
+            outputDir,
           )
         }
       }

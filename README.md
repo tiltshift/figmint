@@ -10,11 +10,17 @@ It also comes with a snazzy CLI:
 
 [This example site](https://tiltshift.github.io/figmint/) shows a figma file above html and css generated using the JSON that figmint outputs. This example can be found and run in the `example` folder in this repo.
 
+👩🏽‍🏫*Recommendations*:
+
+- Use names in figma that work well in javascript. `darkGreen` vs. `Dark Green`
+- Figma lets you name two styles the same thing. This will cause overwrite issues in your exports.
+
 🚨*Notes*:
 
 - Currently only Fill styles, Text styles, and exports are supported. PR's welcome for Grid and Effect styles!
 - Figmint will only pick up a style if it is used in the file you pass it. If you are finding a style isn't syncing make sure an element in the file is using that style.
-- Exports work only with with scale values (2x for example) and not with width or height values (512w). This is a limitation of the figma API.
+- PNG and JPG exports work only with with scale values (2x for example) and not with width or height values (512w). This is a limitation of the figma API.
+- Color styles with multiple properties are available as part of the raw export. The simpler named exports will only display the final property.
 
 ## Install and Config
 
@@ -88,13 +94,13 @@ You can connect the example to your own figma file by editing `.figmintrc.json` 
 
 The CLI for figmint is pretty simple, just run `yarn figmint` or `npm run figmint` in your project after it is installed.
 
-### Watch Mode
+### Watch Mode (alpha)
 
 It is also possible to run the CLI in watch mode. This will update your json as things change on figma without you needing to re-run the command.
 
 🚨*Notes*:
 
-- Currently watch mode will overrite your Figma file every second. Depending on your dev enviroment this may cause your site to reload more than expected. Ideally figmint would only write files that have chagned. PR's welcome!
+- Currently watch mode will overrite the output every second. Depending on your dev enviroment this may cause your site to reload more than expected. Ideally figmint would only write files that have chagned. PR's welcome!
 
 ## Config format
 
@@ -134,3 +140,7 @@ Output supports nested directories, so `some/directory/figma` as output would re
 ###### typescript (default: `false`)
 
 If set to true this will generate typescript types in your export.
+
+## Contributing
+
+make sure to add `#!/usr/bin/env node` to the top of `bin/figma.js` after building as parcel 1 does not do this by default.
