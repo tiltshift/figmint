@@ -1,6 +1,6 @@
 {
   "name": "figmint",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Sync Between Figma and Your Javascript Project",
   "repository": "https://github.com/tiltshift/figmint",
   "license": "MIT",
@@ -33,9 +33,9 @@
   },
   "devDependencies": {
     "@types/node": "^12.12.21",
+    "@types/prettier": "^1.19.0",
     "@types/react": "^16.9.17",
     "@types/rimraf": "^2.0.3",
-    "@types/prettier": "^1.19.0",
     "@types/tinycolor2": "^1.4.2",
     "@typescript-eslint/eslint-plugin": "2.x",
     "@typescript-eslint/parser": "2.x",
