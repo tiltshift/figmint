@@ -8,6 +8,9 @@ import { cosmiconfig } from 'cosmiconfig'
 import fs from 'fs'
 import path from 'path'
 import util from 'util'
+import rimraf from 'rimraf'
+
+import prettier from 'prettier'
 
 import { Text, Box, Color, render } from 'ink'
 
@@ -24,6 +27,8 @@ import {
   FigmintExportType,
   downloadImage,
   PartialFigmintExportType,
+  FigmintGradient,
+  BaseTypeStyleType,
 } from './utils'
 import { exportFormatOptions } from 'figma-js'
 
@@ -89,6 +94,15 @@ const Output = () => {
   const fetchAndAddImageUrls = React.useCallback(
     async (downloadLists: DownloadListType, finalExports: FinalExportsType) => {
       if (client && file) {
+        const baseDirectory = path.join(output, 'exports')
+
+        // Clear out the output dir if it already exists
+        if (fs.existsSync(baseDirectory)) {
+          rimraf.sync(baseDirectory)
+        }
+
+        fs.mkdirSync(baseDirectory, { recursive: true })
+
         await Promise.all(
           Object.keys(downloadLists).map(async (format) => {
             if (downloadLists[format].length > 0) {
@@ -116,7 +130,7 @@ const Output = () => {
 
                 if (image) {
                   // store images based on group
-                  const outDirectory = path.join(output, 'exports', image.group)
+                  const outDirectory = path.join(baseDirectory, image.group)
 
                   // image file name based on format and scale
                   const outFile = `${image.name}${
@@ -258,49 +272,75 @@ const Output = () => {
 
       // write out our file
 
-      let solidColors = ''
-      let fillNames = ''
-      let textNames = ''
+      let colors = {} as { [colorName: string]: string }
+      let gradients = {} as { [gradientName: string]: FigmintGradient }
+      let imageFills = {} as { [imageFillName: string]: string }
+      let textStyles = {} as { [name: string]: BaseTypeStyleType }
 
       styles.fillStyles.forEach((fill) => {
-        fillNames += `| '${fill.name}'`
         fill.styles.forEach((style) => {
-          if (style.type === 'SOLID') {
-            solidColors += `| '${style.color}'`
+          switch (style.type) {
+            case 'SOLID':
+              colors[fill.name] = style.color
+              break
+            case 'GRADIENT_LINEAR':
+            case 'GRADIENT_RADIAL':
+            case 'GRADIENT_ANGULAR':
+            case 'GRADIENT_DIAMOND':
+              gradients[fill.name] = style
+              break
+            case 'IMAGE':
+              imageFills[fill.name] = style.fileName
           }
         })
       })
 
       styles.textStyles.forEach((text) => {
-        textNames += `| '${text.name}'`
+        textStyles[text.name] = text.styles
       })
+
+      const options = await prettier.resolveConfig(output)
 
       fs.writeFileSync(
         path.join(output, `index.${typescript ? 'ts' : 'js'}`),
-        `
-        ${typescript ? `import { FigmintOutput } from 'figmint'` : ''}
-
-        const styles${typescript ? ': FigmintOutput' : ''} = ${util.inspect(
-          styles,
-          {
-            depth: Infinity,
-            compact: false,
-          },
-        )}
+        prettier.format(
+          `
+        const styles = {
+        colors: ${util.inspect(colors, {
+          depth: Infinity,
+          compact: false,
+        })},
+        gradients: ${util.inspect(gradients, {
+          depth: Infinity,
+          compact: false,
+        })},
+        imageFills: ${util.inspect(imageFills, {
+          depth: Infinity,
+          compact: false,
+        })},
+        textStyles: ${util.inspect(textStyles, {
+          depth: Infinity,
+          compact: false,
+        })},
+        raw: ${util.inspect(styles, {
+          depth: Infinity,
+          compact: false,
+        })},
+        }${typescript ? ' as const' : ''}
 
         ${
           typescript
             ? `
-          ${
-            solidColors !== '' ? `export type SolidColors = ${solidColors}` : ''
-          }
-          ${fillNames !== '' ? `export type FillNames = ${fillNames}` : ''}
-          ${textNames !== '' ? `export type TextNames = ${textNames}` : ''}
+          export type ColorValues = keyof typeof styles.colors
+          export type GradientValues = keyof typeof styles.gradients
+          export type TextValues = keyof typeof styles.textStyles
           `
             : ''
         }
 
         export default styles`,
+          { ...options, parser: typescript ? 'typescript' : 'babel' },
+        ),
       )
 
       setLoading(false)

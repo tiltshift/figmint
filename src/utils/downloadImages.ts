@@ -22,7 +22,10 @@ export const downloadImage = function(url: string, outFile: string) {
     })
 }
 
-export const downloadFillImage = (image: ImageFill, outputDir: string) => {
+export const downloadFillImage = (
+  image: ImageFill,
+  outputDirectory: string,
+) => {
   return new Promise<string>((resolve) => {
     // figure out the file type
     https.get(image.url, (response) => {
@@ -34,15 +37,13 @@ export const downloadFillImage = (image: ImageFill, outputDir: string) => {
 
         // once we know the file type write the file
         if (imageExt) {
-          const imageFillDir = path.join(outputDir, 'fillImages')
-
           // make sure the fillImages directory exists
-          if (!fs.existsSync(imageFillDir)) {
-            fs.mkdirSync(imageFillDir, { recursive: true })
+          if (!fs.existsSync(outputDirectory)) {
+            fs.mkdirSync(outputDirectory, { recursive: true })
           }
 
           const outFile = path.join(
-            imageFillDir,
+            outputDirectory,
             `${image.imageRef}.${imageExt.ext}`,
           )
 
