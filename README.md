@@ -12,7 +12,6 @@ It also comes with a snazzy CLI:
 
 👩🏽‍🏫*Recommendations*:
 
-- Use names in figma that work well in javascript. `darkGreen` vs. `Dark Green`
 - Figma lets you name two styles the same thing. This will cause overwrite issues in your exports.
 
 🚨*Notes*:
