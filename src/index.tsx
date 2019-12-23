@@ -1,6 +1,6 @@
 import React from 'react'
 import useInterval from 'use-interval'
-import camcelCase from 'camelcase'
+import camelCase from 'camelcase'
 
 import * as Figma from 'figma-js'
 
@@ -131,7 +131,10 @@ const Output = () => {
 
                 if (image) {
                   // store images based on group
-                  const outDirectory = path.join(baseDirectory, image.group)
+                  const outDirectory = path.join(
+                    baseDirectory,
+                    camelCase(image.group),
+                  )
 
                   // image file name based on format and scale
                   const outFile = `${image.name}${
@@ -282,22 +285,22 @@ const Output = () => {
         fill.styles.forEach((style) => {
           switch (style.type) {
             case 'SOLID':
-              colors[camcelCase(fill.name)] = style.color
+              colors[camelCase(fill.name)] = style.color
               break
             case 'GRADIENT_LINEAR':
             case 'GRADIENT_RADIAL':
             case 'GRADIENT_ANGULAR':
             case 'GRADIENT_DIAMOND':
-              gradients[camcelCase(fill.name)] = style
+              gradients[camelCase(fill.name)] = style
               break
             case 'IMAGE':
-              imageFills[camcelCase(fill.name)] = style.fileName
+              imageFills[camelCase(fill.name)] = style.fileName
           }
         })
       })
 
       styles.textStyles.forEach((text) => {
-        textStyles[camcelCase(text.name)] = text.styles
+        textStyles[camelCase(text.name)] = text.styles
       })
 
       const options = await prettier.resolveConfig(output)
