@@ -64,6 +64,8 @@ export type FigmintStyle<T> = {
     ? BaseFillStyleType[]
     : T extends BaseTypeStyleType
     ? BaseTypeStyleType
+    : T extends BaseEffectStyleType
+    ? BaseEffectStyleType
     : []
 }
 
