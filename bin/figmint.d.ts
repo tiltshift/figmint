@@ -1,7 +1,6 @@
 declare module 'figmint' {
-  type FigmintTypeStyleType = import('./types').FigmintTypeStyleType
-  type FigmintFillStyleType = import('./types').FigmintFillStyleType
-  type FigmintEffectStyleType = import('./types').FigmintEffectStyleType
+  type FigmintTypeStyleType = import('./types').BaseTypeStyleType
+  type FigmintFillStyleType = import('./types').BaseFillStyleType
+  type FigmintEffectStyleType = import('./types').BaseEffectStyleType
   type FigmintExportType = import('./types').FigmintExportType
-  type FigmintOutput = import('./types').FigmintOutput
 }
