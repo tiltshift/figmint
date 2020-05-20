@@ -348,6 +348,7 @@ const Output = () => {
           export type ColorValues = keyof typeof styles.colors
           export type GradientValues = keyof typeof styles.gradients
           export type TextValues = keyof typeof styles.textStyles
+          export type EffectValues = keyof typeof styles.effectStyles
           `
             : ''
         }
