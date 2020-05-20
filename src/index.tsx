@@ -30,6 +30,7 @@ import {
   PartialFigmintExportType,
   FigmintGradient,
   BaseTypeStyleType,
+  BaseEffectStyleType,
 } from './utils'
 import { exportFormatOptions } from 'figma-js'
 
@@ -280,6 +281,7 @@ const Output = () => {
       let gradients = {} as { [gradientName: string]: FigmintGradient }
       let imageFills = {} as { [imageFillName: string]: string }
       let textStyles = {} as { [name: string]: BaseTypeStyleType }
+      let effectStyles = {} as { [name: string]: BaseEffectStyleType }
 
       styles.fillStyles.forEach((fill) => {
         fill.styles.forEach((style) => {
@@ -303,6 +305,10 @@ const Output = () => {
         textStyles[camelCase(text.name)] = text.styles
       })
 
+      styles.effectStyles.forEach((effect) => {
+        effectStyles[camelCase(effect.name)] = effect.styles
+      })
+
       const options = await prettier.resolveConfig(output)
 
       fs.writeFileSync(
@@ -323,6 +329,10 @@ const Output = () => {
           compact: false,
         })},
         textStyles: ${util.inspect(textStyles, {
+          depth: Infinity,
+          compact: false,
+        })},
+        effectStyles: ${util.inspect(effectStyles, {
           depth: Infinity,
           compact: false,
         })},

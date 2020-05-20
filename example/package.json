@@ -8,19 +8,22 @@
     "build": "parcel build index.html --public-url /figmint",
     "figmint": "node ../bin/figmint.js",
     "watch": "node ../bin/figmint.js watch",
-    "postinstall": "relative-deps"
+    "prepare": "relative-deps",
+    "prestart": "relative-deps",
+    "prebuild": "relative-deps",
+    "pretest": "relative-deps"
   },
   "dependencies": {
     "figmint": "^0.1.0",
-    "react": "^16.12.0",
-    "react-dom": "^16.12.0"
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
   },
   "devDependencies": {
-    "@types/react": "^16.9.17",
-    "@types/react-dom": "^16.9.4",
+    "@types/react": "^16.9.35",
+    "@types/react-dom": "^16.9.8",
     "parcel": "^1.12.4",
-    "relative-deps": "^0.2.0",
-    "typescript": "3.7.4"
+    "relative-deps": "^1.0.3",
+    "typescript": "3.9.3"
   },
   "relativeDependencies": {
     "figmint": "../"

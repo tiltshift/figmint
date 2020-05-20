@@ -1,6 +1,6 @@
 {
   "name": "figmint",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "description": "Sync Between Figma and Your Javascript Project",
   "repository": "https://github.com/tiltshift/figmint",
   "license": "MIT",
@@ -18,18 +18,16 @@
   },
   "lint-staged": {
     "*.{js,json,css,md,ts,tsx}": [
-      "prettier --write",
-      "git add"
+      "prettier --write"
     ],
     "*.{js,jsx,ts,tsx}": [
-      "eslint --fix",
-      "git add"
+      "eslint --fix"
     ]
   },
   "dependencies": {
-    "camelcase": "^5.3.1",
-    "figma-js": "^1.9.0",
-    "rimraf": "^3.0.0",
+    "camelcase": "^6.0.0",
+    "figma-js": "^1.10.1",
+    "rimraf": "^3.0.2",
     "utils": "^0.3.1"
   },
   "devDependencies": {
@@ -48,22 +46,22 @@
     "eslint-plugin-flowtype": "3.x",
     "eslint-plugin-import": "2.x",
     "eslint-plugin-jsx-a11y": "6.x",
-    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-prettier": "^3.1.3",
     "eslint-plugin-react": "7.x",
     "eslint-plugin-react-hooks": "1.x",
-    "gh-pages": "^2.1.1",
-    "husky": "^3.1.0",
+    "gh-pages": "^2.2.0",
+    "husky": "^4.2.5",
     "image-type": "^4.1.0",
     "ink": "^2.6.0",
     "ink-box": "^1.0.0",
     "ink-gradient": "^1.0.0",
     "ink-spinner": "^3.0.1",
-    "lint-staged": "^9.5.0",
+    "lint-staged": "^10.2.4",
     "parcel-bundler": "^1.12.4",
-    "prettier": "^1.19.1",
+    "prettier": "^2.0.5",
     "react": "^16.12.0",
     "tinycolor2": "^1.4.1",
-    "typescript": "^3.7.4",
+    "typescript": "^3.9.3",
     "use-interval": "^1.2.1"
   },
   "scripts": {

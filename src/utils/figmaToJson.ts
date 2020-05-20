@@ -11,13 +11,13 @@ import {
 } from './'
 
 export const figmaToJson = (figmaObject: RawStyleObject): FigmintOutput => {
-  const formattedStyles = {
+  const formattedStyles = ({
     fillStyles: [],
     textStyles: [],
     effectStyles: [],
     gridStyles: [],
     exports: [],
-  } as FigmintOutput
+  } as unknown) as FigmintOutput
 
   Object.values(figmaObject).forEach((style) => {
     const baseStyle = {
@@ -116,6 +116,19 @@ export const figmaToJson = (figmaObject: RawStyleObject): FigmintOutput => {
         })
         break
       case 'EFFECT':
+        styleProps = style.props as ReadonlyArray<Figma.Effect>
+
+        formattedStyles.effectStyles.push({
+          ...baseStyle,
+          styles: styleProps.map((effect) => {
+            const baseEffect: any = effect
+
+            if (effect.color) baseEffect.color = figmaColorToHSL(effect.color)
+
+            return baseEffect
+          }),
+        })
+
         break
       case 'GRID':
         break

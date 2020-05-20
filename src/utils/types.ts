@@ -53,6 +53,10 @@ export type BaseTypeStyleType = Figma.TypeStyle & {
   fontStyle: string
 }
 
+export type BaseEffectStyleType = Omit<Figma.Effect, 'color'> & {
+  color: string
+}
+
 export type FigmintStyle<T> = {
   key: string
   name: string
