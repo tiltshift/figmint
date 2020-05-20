@@ -69,6 +69,7 @@ export type FigmintStyle<T> = {
 
 export type FigmintFillStyleType = FigmintStyle<BaseFillStyleType>
 export type FigmintTypeStyleType = FigmintStyle<BaseTypeStyleType>
+export type FigmintEffectStyleType = FigmintStyle<BaseEffectStyleType>
 
 export type PartialFigmintExportType = {
   id: string
@@ -99,7 +100,7 @@ export type FigmintExportType = {
 export type FigmintOutput = {
   fillStyles: FigmintFillStyleType[]
   textStyles: FigmintTypeStyleType[]
-  effectStyles: any[]
+  effectStyles: FigmintEffectStyleType[]
   gridStyles: any[]
   exports: FigmintExportType
 }
