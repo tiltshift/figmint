@@ -65,12 +65,17 @@ export const getStylesFromFile = async (
 const findStyleInNode = (
   keysToFind: string[],
   node: Figma.Node,
+  canvas?: Figma.Canvas,
   parent?: Figma.Node,
   styles: RawStyleObject = {},
   exports: ExportsObject = {},
 ) => {
   let finalStyles = styles
   let finalExports = exports
+
+  let canvasNode: Figma.Canvas | undefined = canvas
+
+  if (node.type === 'CANVAS') canvasNode = node
 
   if (
     'exportSettings' in node &&
@@ -80,6 +85,7 @@ const findStyleInNode = (
     finalExports[node.id] = {
       exportInfo: node.exportSettings,
       name: node.name,
+      page: canvas ? canvas.name : 'undefined',
       folder: parent ? parent.name : 'ungrouped',
     }
   }
@@ -128,6 +134,7 @@ const findStyleInNode = (
       const { styles: childStyles, exports: childExports } = findStyleInNode(
         keysToFind,
         child,
+        canvasNode,
         node,
         styles,
         finalExports,

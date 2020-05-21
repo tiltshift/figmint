@@ -15,6 +15,7 @@ export type ExportType = Figma.ExportSetting
 export type ExportsObject = {
   [key: string]: {
     name: string
+    page: string
     folder: string
     exportInfo: Readonly<ExportType[]>
   }
@@ -77,6 +78,7 @@ export type PartialFigmintExportType = {
   id: string
   format: exportFormatOptions
   scale: number
+  page: string
   group: string
   name: string
   url?: string

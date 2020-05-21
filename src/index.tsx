@@ -46,7 +46,7 @@ type DownloadListType = {
 }
 
 type FinalExportsType = {
-  [group: string]: {
+  [page: string]: {
     [fileName: string]: {
       svg?: PartialFigmintExportType
       pdf?: PartialFigmintExportType
@@ -131,10 +131,10 @@ const Output = () => {
                 )
 
                 if (image) {
-                  // store images based on group
+                  // store images based on the page
                   const outDirectory = path.join(
                     baseDirectory,
-                    camelCase(image.group),
+                    camelCase(image.page),
                   )
 
                   // image file name based on format and scale
@@ -152,10 +152,10 @@ const Output = () => {
                   downloadImage(url, outUrl)
 
                   if (image.format === 'png' || image.format === 'jpg') {
-                    finalExports[image.group][image.name][image.format]![
+                    finalExports[image.page][image.name][image.format]![
                       image.scale
                     ] = {
-                      ...finalExports[image.group][image.name][image.format]![
+                      ...finalExports[image.page][image.name][image.format]![
                         image.scale
                       ],
                       url: outUrl,
@@ -163,8 +163,8 @@ const Output = () => {
                       file: outFile,
                     }
                   } else {
-                    finalExports[image.group][image.name][image.format] = {
-                      ...finalExports[image.group][image.name][image.format]!,
+                    finalExports[image.page][image.name][image.format] = {
+                      ...finalExports[image.page][image.name][image.format]!,
                       url: outUrl,
                       directory: outDirectory,
                       file: outFile,
@@ -221,6 +221,7 @@ const Output = () => {
         info.exportInfo.forEach((image) => {
           const name = info.name
           const group = info.folder
+          const page = info.page
           const format = image.format.toLowerCase() as exportFormatOptions
           const scale =
             image.constraint.type === 'SCALE' ? image.constraint.value : 1
@@ -228,22 +229,23 @@ const Output = () => {
           const imageDetails = {
             id,
             format,
+            page,
             group,
             name,
             scale,
           }
 
-          if (!(group in finalExports)) {
-            finalExports[group] = {}
+          if (!(page in finalExports)) {
+            finalExports[page] = {}
           }
 
-          if (!(name in finalExports[group])) {
-            finalExports[group][name] = {}
+          if (!(name in finalExports[page])) {
+            finalExports[page][name] = {}
           }
 
           // vector images don't have a scale
           if (format === 'svg' || format === 'pdf') {
-            finalExports[group][name][format] = imageDetails
+            finalExports[page][name][format] = imageDetails
 
             if (!(format in downloadLists)) {
               downloadLists[format] = []
@@ -251,10 +253,10 @@ const Output = () => {
 
             downloadLists[format].push(imageDetails)
           } else if (format === 'png' || format === 'jpg') {
-            if (!(format in finalExports[group][name])) {
-              finalExports[group][name][format] = {}
+            if (!(format in finalExports[page][name])) {
+              finalExports[page][name][format] = {}
             }
-            finalExports[group][name][format]![scale] = imageDetails
+            finalExports[page][name][format]![scale] = imageDetails
 
             const formatScale = format + `@${scale}x`
 
