@@ -6,7 +6,7 @@
   "scripts": {
     "start": "parcel index.html",
     "build": "parcel build index.html --public-url /figmint",
-    "figmint": "node ../bin/figmint.js",
+    "figmint": "yarn && node ../bin/figmint.js",
     "watch": "node ../bin/figmint.js watch",
     "prepare": "relative-deps",
     "prestart": "relative-deps",
