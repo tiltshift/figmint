@@ -321,26 +321,32 @@ const Output = () => {
         colors: ${util.inspect(colors, {
           depth: Infinity,
           compact: false,
+          maxArrayLength: null,
         })},
         gradients: ${util.inspect(gradients, {
           depth: Infinity,
           compact: false,
+          maxArrayLength: null,
         })},
         imageFills: ${util.inspect(imageFills, {
           depth: Infinity,
           compact: false,
+          maxArrayLength: null,
         })},
         textStyles: ${util.inspect(textStyles, {
           depth: Infinity,
           compact: false,
+          maxArrayLength: null,
         })},
         effectStyles: ${util.inspect(effectStyles, {
           depth: Infinity,
           compact: false,
+          maxArrayLength: null,
         })},
         raw: ${util.inspect(styles, {
           depth: Infinity,
           compact: false,
+          maxArrayLength: null,
         })},
         }${typescript ? ' as const' : ''}
 
