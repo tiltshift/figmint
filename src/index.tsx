@@ -318,30 +318,12 @@ const Output = () => {
         prettier.format(
           `
         const styles = {
-        colors: ${util.inspect(colors, {
-          depth: Infinity,
-          compact: false,
-        })},
-        gradients: ${util.inspect(gradients, {
-          depth: Infinity,
-          compact: false,
-        })},
-        imageFills: ${util.inspect(imageFills, {
-          depth: Infinity,
-          compact: false,
-        })},
-        textStyles: ${util.inspect(textStyles, {
-          depth: Infinity,
-          compact: false,
-        })},
-        effectStyles: ${util.inspect(effectStyles, {
-          depth: Infinity,
-          compact: false,
-        })},
-        raw: ${util.inspect(styles, {
-          depth: Infinity,
-          compact: false,
-        })},
+        colors: ${JSON.stringify(colors)},
+        gradients: ${JSON.stringify(gradients)},
+        imageFills: ${JSON.stringify(imageFills)},
+        textStyles: ${JSON.stringify(textStyles)},
+        effectStyles: ${JSON.stringify(effectStyles)},
+        raw: ${JSON.stringify(styles)},
         }${typescript ? ' as const' : ''}
 
         ${
