@@ -12,3 +12,4 @@ bin/types.d.ts
 example/figma
 /example/yarn.lock
 /example/figmaStyles
+/example/.parcel-cache

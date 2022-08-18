@@ -1,8 +1,8 @@
 import React from 'react'
 import { FigmintFillStyleType } from 'figmint'
 
-// @ts-ignore
-import pngs from '../figma/fillImages/*.png'
+// @ts-ignore TS does not understand imports like this
+import images from '../figma/fillImages/*.png'
 
 const Fill: React.FC<{ fillStyle: FigmintFillStyleType }> = ({ fillStyle }) => {
   return (
@@ -60,7 +60,7 @@ const Fill: React.FC<{ fillStyle: FigmintFillStyleType }> = ({ fillStyle }) => {
 
               switch (ext) {
                 case 'png':
-                  imageSrc = pngs[imageName]
+                  imageSrc = images[imageName]
                   break
               }
 
