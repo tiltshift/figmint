@@ -13,3 +13,6 @@ example/figma
 /example/yarn.lock
 /example/figmaStyles
 /example/.parcel-cache
+/.parcel-cache
+/example/.yarn
+/.yarn

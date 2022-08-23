@@ -1,6 +1,8 @@
+#!/usr/bin/env node
+
 import React from 'react'
 import useInterval from 'use-interval'
-import camelCase from 'camelcase'
+import camelCase from 'lodash/camelCase'
 
 import * as Figma from 'figma-js'
 
@@ -13,7 +15,7 @@ import rimraf from 'rimraf'
 
 import prettier from 'prettier'
 
-import { Text, Box, Color, render } from 'ink'
+import { Text, Box, render } from 'ink'
 
 import { StyleFill } from './StyleFill'
 import { StyleText } from './StyleText'
@@ -63,11 +65,9 @@ type FinalExportsType = {
 // Components
 
 const Header = ({ text }: { text: string }) => (
-  <Color gray>
-    <Box marginBottom={1}>
-      <Text bold>{text}:</Text>
-    </Box>
-  </Color>
+  <Box marginBottom={1}>
+    <Text bold color="gray">{text}:</Text>
+  </Box>
 )
 
 const Output = () => {
@@ -138,9 +138,8 @@ const Output = () => {
                   )
 
                   // image file name based on format and scale
-                  const outFile = `${image.name}${
-                    image.scale > 1 ? `@${image.scale}x` : ''
-                  }.${image.format}`
+                  const outFile = `${image.name}${image.scale > 1 ? `@${image.scale}x` : ''
+                    }.${image.format}`
 
                   const outUrl = path.join(outDirectory, outFile)
 
@@ -156,7 +155,7 @@ const Output = () => {
                       image.scale
                     ] = {
                       ...finalExports[image.page][image.name][image.format]![
-                        image.scale
+                      image.scale
                       ],
                       url: outUrl,
                       directory: outDirectory,
@@ -319,39 +318,38 @@ const Output = () => {
           `
         const styles = {
         colors: ${util.inspect(colors, {
-          depth: Infinity,
-          compact: false,
-          maxArrayLength: null,
-        })},
+            depth: Infinity,
+            compact: false,
+            maxArrayLength: null,
+          })},
         gradients: ${util.inspect(gradients, {
-          depth: Infinity,
-          compact: false,
-          maxArrayLength: null,
-        })},
+            depth: Infinity,
+            compact: false,
+            maxArrayLength: null,
+          })},
         imageFills: ${util.inspect(imageFills, {
-          depth: Infinity,
-          compact: false,
-          maxArrayLength: null,
-        })},
+            depth: Infinity,
+            compact: false,
+            maxArrayLength: null,
+          })},
         textStyles: ${util.inspect(textStyles, {
-          depth: Infinity,
-          compact: false,
-          maxArrayLength: null,
-        })},
+            depth: Infinity,
+            compact: false,
+            maxArrayLength: null,
+          })},
         effectStyles: ${util.inspect(effectStyles, {
-          depth: Infinity,
-          compact: false,
-          maxArrayLength: null,
-        })},
+            depth: Infinity,
+            compact: false,
+            maxArrayLength: null,
+          })},
         raw: ${util.inspect(styles, {
-          depth: Infinity,
-          compact: false,
-          maxArrayLength: null,
-        })},
+            depth: Infinity,
+            compact: false,
+            maxArrayLength: null,
+          })},
         }${typescript ? ' as const' : ''}
 
-        ${
-          typescript
+        ${typescript
             ? `
           export type ColorValues = keyof typeof styles.colors
           export type GradientValues = keyof typeof styles.gradients
@@ -359,7 +357,7 @@ const Output = () => {
           export type EffectValues = keyof typeof styles.effectStyles
           `
             : ''
-        }
+          }
 
         export default styles`,
           { ...options, parser: typescript ? 'typescript' : 'babel' },
@@ -478,8 +476,8 @@ const Output = () => {
         {exports && (
           <Box flexDirection="column">
             <Header text="Exports" />
-            <Box textWrap="wrap">
-              <Text>
+            <Box>
+              <Text wrap="wrap">
                 Exports are working, but we don't display anything here yet...
               </Text>
             </Box>

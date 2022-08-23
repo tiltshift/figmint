@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { Text, Box, Color } from 'ink'
+import { Text, Box } from 'ink'
 
 import { FigmintTypeStyleType } from './utils'
 
@@ -11,10 +11,10 @@ export const StyleText: React.FC<{
 }> = ({ text }) => (
   <StyleBase name={text.name}>
     <Box flexDirection="row">
-      <Color blue>
+      <Text color="blue">
         <Text bold>{text.styles.fontFamily}</Text> {text.styles.fontSize}pt/
         {+text.styles.lineHeight.toFixed(2)}em, {text.styles.fontWeight} weight
-      </Color>
+      </Text>
     </Box>
   </StyleBase>
 )

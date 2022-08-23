@@ -55,19 +55,19 @@ export type BaseTypeStyleType = Figma.TypeStyle & {
 }
 
 export type BaseEffectStyleType = Omit<Figma.Effect, 'color'> & {
-  color: string
+  color?: string
 }
 
 export type FigmintStyle<T> = {
   key: string
   name: string
   styles: T extends BaseFillStyleType
-    ? BaseFillStyleType[]
-    : T extends BaseTypeStyleType
-    ? BaseTypeStyleType
-    : T extends BaseEffectStyleType
-    ? BaseEffectStyleType
-    : []
+  ? BaseFillStyleType[]
+  : T extends BaseTypeStyleType
+  ? BaseTypeStyleType[]
+  : T extends BaseEffectStyleType
+  ? BaseEffectStyleType | BaseEffectStyleType[]
+  : []
 }
 
 export type FigmintFillStyleType = FigmintStyle<BaseFillStyleType>

@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { Text, Box, Color } from 'ink'
+import { Text, Box } from 'ink'
 // @ts-ignore
 import Gradient from 'ink-gradient'
 import tinycolor from 'tinycolor2'
@@ -9,9 +9,9 @@ import { FigmintFillStyleType } from './utils'
 
 import { StyleBase } from './StyleBase'
 
-const Preview: React.FC = () => (
+const Preview: React.FC<{ color?: React.ComponentProps<typeof Text>['color'] }> = ({ color }) => (
   <Box marginRight={1}>
-    <Text>██████████████████</Text>
+    <Text color={color}>██████████████████</Text>
   </Box>
 )
 
@@ -24,18 +24,14 @@ export const StyleFill: React.FC<{
         switch (style.type) {
           case 'IMAGE':
             return (
-              <Color gray key={index}>
-                <Text>
-                  🖼{'  '}
-                  {style.fileName.split('.')[1]} image
-                </Text>
-              </Color>
+              <Text color="gray" key={index}>
+                🖼{'  '}
+                {style.fileName.split('.')[1]} image
+              </Text>
             )
           case 'SOLID':
             return (
-              <Color key={index} hex={tinycolor(style.color).toHex()}>
-                <Preview />
-              </Color>
+              <Preview color={tinycolor(style.color).toHex()} key={index} />
             )
           case 'GRADIENT_LINEAR':
             return (
@@ -65,5 +61,5 @@ export const StyleFill: React.FC<{
         }
       })}
     </Box>
-  </StyleBase>
+  </StyleBase >
 )

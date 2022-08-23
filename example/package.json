@@ -7,7 +7,7 @@
   "scripts": {
     "start": "parcel",
     "build": "parcel build --public-url /figmint",
-    "figmint": "yarn && node ../bin/figmint.js",
+    "figmint": "node ../bin/figmint.js --enable-source-maps",
     "watch": "node ../bin/figmint.js watch",
     "prepare": "relative-deps",
     "prestart": "relative-deps",

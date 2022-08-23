@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { Text, Box, Color } from 'ink'
+import { Text, Box } from 'ink'
 
 import { FigmintExportType } from './utils'
 
@@ -11,9 +11,8 @@ export const StyleExport: React.FC<{
 }> = ({ image }) => (
   <StyleBase name={image.file.split('.')[0]}>
     <Box flexDirection="row">
-      <Color blue>
-        <Text bold>{image.directory.split('/')[2]}</Text>, {image.format}
-      </Color>
+      <Text bold color="blue">{image.directory.split('/')[2]}</Text>, {image.format}
+
     </Box>
   </StyleBase>
 )
