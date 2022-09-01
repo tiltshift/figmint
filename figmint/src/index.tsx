@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { render, Text } from 'ink';
+import { render, Text } from 'ink'
+import React, { useState, useEffect } from 'react'
 
 const Counter = () => {
-  const [counter, setCounter] = useState(0);
+  const [counter, setCounter] = useState(0)
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setCounter(previousCounter => previousCounter + 1);
-    }, 100);
+      setCounter((previousCounter) => previousCounter + 1)
+    }, 100)
 
     return () => {
-      clearInterval(timer);
-    };
-  }, []);
+      clearInterval(timer)
+    }
+  }, [])
 
-  return <Text color="green">{counter} tests passed</Text>;
-};
+  return <Text color="green">{counter} tests passed</Text>
+}
 
-render(<Counter />);
+render(<Counter />)
