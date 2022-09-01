@@ -12,13 +12,13 @@
   ],
   "devDependencies": {
     "gh-pages": "^2.2.0",
-    "ts-node": "^10.9.1"
+    "ts-node-dev": "^2.0.0"
   },
   "scripts": {
     "lint": "cd config && eslint '../**/*.{js,jsx,ts,tsx}'",
     "gh-pages": "gh-pages -d example/dist -m \"Update Github pages\"",
     "build": "cd figmint && node build.js",
-    "dev": "cd figmint && ts-node src/index.tsx",
+    "dev": "cd figmint && ts-node-dev --clear --exit-child src/index.tsx",
     "type-check": "cd figmint && tsc --noEmit",
     "build-types": "tsc src/utils/types.ts --outDir bin --declaration --emitDeclarationOnly",
     "release": "yarn build && yarn publish"
