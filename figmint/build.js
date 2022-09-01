@@ -1,4 +1,4 @@
-(async () => {
+;(async () => {
   let esbuild = require('esbuild')
 
   let result = await esbuild.build({
