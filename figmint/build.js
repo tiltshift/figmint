@@ -9,7 +9,9 @@
     sourcemap: true,
     target: 'node14',
     minify: true,
-    metafile: true
+    metafile: true,
+    drop: ['debugger', 'console'],
+    external: ['react-devtools-core'],
   })
 
   let text = await esbuild.analyzeMetafile(result.metafile)
