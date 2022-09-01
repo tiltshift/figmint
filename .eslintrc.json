@@ -1,29 +1,5 @@
 {
-  "parser": "@typescript-eslint/parser",
   "extends": [
-    "react-app",
-    "eslint:recommended",
-    "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:jsx-a11y/recommended",
-    "prettier",
-    "prettier/@typescript-eslint",
-    "prettier/react"
-  ],
-  "plugins": ["@typescript-eslint", "jsx-a11y", "prettier", "react"],
-  "rules": {
-    "no-unused-vars": "off",
-    "@typescript-eslint/no-unused-vars": [
-      "error",
-      { "vars": "all", "args": "after-used", "ignoreRestSiblings": false }
-    ],
-
-    "jsx-a11y/accessible-emoji": "off",
-    "no-else-return": ["error", { "allowElseIf": true }],
-    "no-param-reassign": "error",
-    "no-return-assign": "error",
-    "prefer-promise-reject-errors": "error",
-    "max-depth": ["error", 4],
-
-    "react/style-prop-object": 0
-  }
+    "./config/eslint.js"
+  ]
 }

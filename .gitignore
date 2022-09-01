@@ -4,9 +4,8 @@ lib
 yarn-error.log
 dist
 
-bin/figmint.js
-bin/figmint.js.map
-bin/types.d.ts
+bin/*
+*/bin/*
 
 .cache
 example/figma
